@@ -223,7 +223,30 @@ export class SpawnManager {
   }
 
   private spawnDimorphodon(scrollSpeed: number): void {
-    this.spawnPterodactyl(scrollSpeed);
+    const startY = GROUND_Y - 220;
+    const obstacle = new Obstacle(
+      this.scene, GAME_WIDTH + 60, startY,
+      'hazard-dimorphodon', 'dimorphodon',
+    );
+    obstacle.setVelocityX(-scrollSpeed * 1.4);
+    this.obstacleGroup.add(obstacle);
+
+    // Dive toward ground, then swoop back up
+    this.scene.tweens.add({
+      targets: obstacle,
+      y: GROUND_Y - 30,
+      duration: 800,
+      ease: 'Sine.easeIn',
+      onComplete: () => {
+        // Swoop back up
+        this.scene.tweens.add({
+          targets: obstacle,
+          y: GROUND_Y - 250,
+          duration: 600,
+          ease: 'Sine.easeOut',
+        });
+      },
+    });
   }
 
   private spawnStegosaurus(scrollSpeed: number): void {
