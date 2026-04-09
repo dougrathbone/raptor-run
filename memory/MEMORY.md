@@ -1,0 +1,2 @@
+- [User profile](user_profile.md) — Dad + 8-year-old son Will building their first game together
+- [Project context](project_raptor_run.md) — Raptor Run MVP built, currently at milestone 1
