@@ -158,3 +158,35 @@ export const PLATFORM_WIDTH = 120;
 export const PLATFORM_HEIGHT = 16;
 export const PLATFORM_Y_MIN = GROUND_Y - 140; // Highest platform
 export const PLATFORM_Y_MAX = GROUND_Y - 60;  // Lowest platform
+
+// --- Spawn weight table with progressive unlock ---
+export interface SpawnEntry {
+  type: string;
+  weight: number;
+  unlockDistance: number;
+}
+
+export const OBSTACLE_SPAWN_TABLE: SpawnEntry[] = [
+  { type: 'log', weight: 22, unlockDistance: 0 },
+  { type: 'bench', weight: 10, unlockDistance: 0 },
+  { type: 'pterodactyl', weight: 18, unlockDistance: 0 },
+  { type: 'rock', weight: 15, unlockDistance: 0 },
+  { type: 'triceratops', weight: 15, unlockDistance: 0 },
+  { type: 'trap', weight: 10, unlockDistance: 0 },
+  { type: 'spear', weight: 10, unlockDistance: 0 },
+  { type: 'compy', weight: 12, unlockDistance: 300 },
+  { type: 'dimorphodon', weight: 10, unlockDistance: 600 },
+  { type: 'stegosaurus', weight: 10, unlockDistance: 1000 },
+  { type: 'dilophosaurus', weight: 8, unlockDistance: 1500 },
+  { type: 'ankylosaurus', weight: 8, unlockDistance: 2000 },
+];
+
+// --- T-Rex chase event ---
+export const TREX_UNLOCK_DISTANCE = 3000;
+export const TREX_CHASE_DURATION = 11000;
+export const TREX_CHASE_SPEED_MULTIPLIER = 1.5;
+export const TREX_CHASE_COOLDOWN = 90000;
+export const TREX_CHASE_CHANCE = 0.05;
+export const TREX_WARNING_DURATION = 1500;
+export const TREX_EXIT_DURATION = 2000;
+export const TREX_CHASE_BONUS = 1000;
