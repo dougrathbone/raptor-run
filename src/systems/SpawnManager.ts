@@ -250,7 +250,12 @@ export class SpawnManager {
   }
 
   private spawnStegosaurus(scrollSpeed: number): void {
-    this.spawnTriceratops(scrollSpeed);
+    const obstacle = new Obstacle(
+      this.scene, GAME_WIDTH + 60, GROUND_Y - 36,
+      'hazard-stegosaurus', 'stegosaurus',
+    );
+    obstacle.setVelocityX(-scrollSpeed * 0.8);
+    this.obstacleGroup.add(obstacle);
   }
 
   private spawnDilophosaurus(scrollSpeed: number): void {
