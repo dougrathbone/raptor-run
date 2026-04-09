@@ -259,7 +259,32 @@ export class SpawnManager {
   }
 
   private spawnDilophosaurus(scrollSpeed: number): void {
-    this.spawnHunterTrap(scrollSpeed);
+    const obstacle = new Obstacle(
+      this.scene, GAME_WIDTH + 40, GROUND_Y - 35,
+      'hazard-dilophosaurus', 'dilophosaurus',
+    );
+    obstacle.setVelocityX(-scrollSpeed);
+    this.obstacleGroup.add(obstacle);
+
+    // Spit 1-2 venom globs after a delay
+    this.scene.time.delayedCall(600, () => {
+      if (obstacle.active) {
+        this.spawnVenom(obstacle.x - 10, obstacle.y - 20, scrollSpeed);
+      }
+    });
+    this.scene.time.delayedCall(1000, () => {
+      if (obstacle.active && Math.random() < 0.6) {
+        this.spawnVenom(obstacle.x - 10, obstacle.y - 25, scrollSpeed);
+      }
+    });
+  }
+
+  private spawnVenom(x: number, y: number, scrollSpeed: number): void {
+    const venom = new Obstacle(this.scene, x, y, 'hazard-venom', 'venom');
+    venom.setVelocity(-scrollSpeed * 1.5, -200);
+    this.obstacleGroup.add(venom);
+    // Enable gravity AFTER adding to group (group default is allowGravity: false)
+    (venom.body as Phaser.Physics.Arcade.Body).setAllowGravity(true);
   }
 
   private spawnAnkylosaurus(scrollSpeed: number): void {
