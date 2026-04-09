@@ -255,6 +255,7 @@ export class SpawnManager {
       this.scene, GAME_WIDTH + 60, GROUND_Y - 36,
       'hazard-stegosaurus', 'stegosaurus',
     );
+    obstacle.setFlipX(true);
     obstacle.setVelocityX(-scrollSpeed * 0.8);
     this.obstacleGroup.add(obstacle);
   }

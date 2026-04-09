@@ -94,8 +94,9 @@ export class ChaseManager {
     this.state = 'chasing';
     this.stateTimer = TREX_CHASE_DURATION;
 
-    // Create T-Rex sprite off-screen left
+    // Create T-Rex sprite off-screen left, facing right (toward raptor)
     this.trexSprite = this.scene.add.sprite(-160, GROUND_Y - 60, 'hazard-trex');
+    this.trexSprite.setFlipX(true);
     this.trexSprite.setDepth(8);
 
     // Slide in from the left
