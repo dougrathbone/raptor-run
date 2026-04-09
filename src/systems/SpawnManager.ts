@@ -154,6 +154,7 @@ export class SpawnManager {
   private spawnPterodactyl(scrollSpeed: number): void {
     const y = Phaser.Math.Between(GROUND_Y - 190, GROUND_Y - 90);
     const obstacle = new Obstacle(this.scene, GAME_WIDTH + 60, y, 'hazard-pterodactyl', 'pterodactyl');
+    obstacle.setFlipX(true);
     obstacle.setVelocityX(-scrollSpeed * 1.2);
     this.scene.tweens.add({
       targets: obstacle,
@@ -180,9 +181,11 @@ export class SpawnManager {
   }
 
   private spawnTriceratops(scrollSpeed: number): void {
+    const texture = this.scene.textures.exists('triceratops-sprite')
+      ? 'triceratops-sprite' : 'hazard-triceratops';
     const obstacle = new Obstacle(
       this.scene, GAME_WIDTH + 80, GROUND_Y - 32,
-      'hazard-triceratops', 'triceratops',
+      texture, 'triceratops',
     );
     obstacle.setVelocityX(-scrollSpeed * 1.5);
     this.obstacleGroup.add(obstacle);
@@ -217,6 +220,7 @@ export class SpawnManager {
         this.scene, GAME_WIDTH + 40 + xOffset, y,
         'hazard-compy', 'compy',
       );
+      compy.setFlipX(true);
       compy.setVelocityX(-scrollSpeed * 1.3);
       this.obstacleGroup.add(compy);
     }
@@ -228,6 +232,7 @@ export class SpawnManager {
       this.scene, GAME_WIDTH + 60, startY,
       'hazard-dimorphodon', 'dimorphodon',
     );
+    obstacle.setFlipX(true);
     obstacle.setVelocityX(-scrollSpeed * 1.4);
     this.obstacleGroup.add(obstacle);
 
@@ -265,6 +270,7 @@ export class SpawnManager {
       this.scene, GAME_WIDTH + 40, GROUND_Y - 35,
       'hazard-dilophosaurus', 'dilophosaurus',
     );
+    obstacle.setFlipX(true);
     obstacle.setVelocityX(-scrollSpeed);
     this.obstacleGroup.add(obstacle);
 
@@ -294,6 +300,7 @@ export class SpawnManager {
       this.scene, GAME_WIDTH + 60, GROUND_Y - 26,
       'hazard-ankylosaurus', 'ankylosaurus',
     );
+    obstacle.setFlipX(true);
     obstacle.setVelocityX(-scrollSpeed * 0.7);
     this.obstacleGroup.add(obstacle);
   }

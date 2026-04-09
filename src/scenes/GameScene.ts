@@ -354,10 +354,12 @@ export class GameScene extends Phaser.Scene {
   private gameOver(): void {
     this.isGameOver = true;
     this.raptor.setVelocity(0, 0);
-    this.raptor.setTint(0xff4444);
-    // Play death animation if available
+    // Play death animation using external sprite if available
     if (this.textures.exists('dino-dead')) {
+      this.raptor.clearTint();
       this.raptor.play('dino-dead-anim');
+    } else {
+      this.raptor.setTint(0xff4444);
     }
     this.scoreManager.saveHighScore();
 
