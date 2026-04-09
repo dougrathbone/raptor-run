@@ -82,6 +82,7 @@ export class BootScene extends Phaser.Scene {
     this.makeFoodEgg();
     this.makeObstacleLog();
     this.makeObstacleBench();
+    this.makeHazardCompy();
     this.makeHazardPterodactyl();
     this.makeHazardRock();
     this.makeHazardTriceratops();
@@ -2990,6 +2991,93 @@ export class BootScene extends Phaser.Scene {
 
     refresh();
   }
+
+  private makeHazardCompy(): void {
+  const W = 32, H = 28;
+  const { ctx, refresh } = this.canvas('hazard-compy', W, H);
+
+  // Shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.12)';
+  ctx.beginPath();
+  ctx.ellipse(16, H - 2, 12, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Tail (long, thin, stiff)
+  const tailGrad = ctx.createLinearGradient(0, 8, 0, 14);
+  tailGrad.addColorStop(0, '#5a7a38');
+  tailGrad.addColorStop(1, '#7a9a58');
+  ctx.fillStyle = tailGrad;
+  ctx.beginPath();
+  ctx.moveTo(6, 10);
+  ctx.quadraticCurveTo(2, 9, 0, 8);
+  ctx.lineTo(0, 11);
+  ctx.quadraticCurveTo(2, 12, 6, 13);
+  ctx.closePath();
+  ctx.fill();
+
+  // Body (small, lean)
+  const bodyGrad = ctx.createLinearGradient(0, 6, 0, 20);
+  bodyGrad.addColorStop(0, '#4a6a28');
+  bodyGrad.addColorStop(0.5, '#5a8038');
+  bodyGrad.addColorStop(1, '#8aaa68');
+  ctx.fillStyle = bodyGrad;
+  ctx.beginPath();
+  ctx.ellipse(14, 13, 8, 6, -0.1, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Feather tufts along back
+  ctx.strokeStyle = '#3a5a18';
+  ctx.lineWidth = 0.8;
+  for (let i = 0; i < 4; i++) {
+    const fx = 9 + i * 3;
+    ctx.beginPath();
+    ctx.moveTo(fx, 8);
+    ctx.lineTo(fx + 1, 5);
+    ctx.stroke();
+  }
+
+  // Hind leg
+  ctx.fillStyle = '#4a6a28';
+  ctx.fillRect(15, 17, 3, 7);
+  ctx.fillRect(13, 23, 5, 2); // foot
+
+  // Head (small, alert)
+  ctx.fillStyle = '#5a7a38';
+  ctx.beginPath();
+  ctx.ellipse(23, 8, 5, 4, 0.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Snout
+  ctx.fillStyle = '#6a8a48';
+  ctx.beginPath();
+  ctx.moveTo(27, 6);
+  ctx.lineTo(31, 7);
+  ctx.lineTo(31, 9);
+  ctx.lineTo(27, 10);
+  ctx.closePath();
+  ctx.fill();
+
+  // Eye (large for small dino)
+  ctx.fillStyle = '#ffaa22';
+  ctx.beginPath();
+  ctx.arc(24, 7, 2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.arc(24.5, 7, 0.8, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Tiny arm
+  ctx.strokeStyle = '#4a6a28';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(19, 12);
+  ctx.lineTo(21, 14);
+  ctx.lineTo(20, 15);
+  ctx.stroke();
+
+  refresh();
+}
 
   private makePlatform(): void {
     const W = 120, H = 16;
