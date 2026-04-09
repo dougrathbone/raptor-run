@@ -87,6 +87,7 @@ export class BootScene extends Phaser.Scene {
     this.makeHazardStegosaurus();
     this.makeHazardDilophosaurus();
     this.makeHazardVenom();
+    this.makeHazardAnkylosaurus();
     this.makeHazardPterodactyl();
     this.makeHazardRock();
     this.makeHazardTriceratops();
@@ -3705,6 +3706,184 @@ export class BootScene extends Phaser.Scene {
     ctx.beginPath();
     ctx.ellipse(12, 13, 1.5, 2.5, 0.3, 0, Math.PI * 2);
     ctx.fill();
+
+    refresh();
+  }
+
+  private makeHazardAnkylosaurus(): void {
+    const W = 96, H = 52;
+    const { ctx, refresh } = this.canvas('hazard-ankylosaurus', W, H);
+
+    // Shadow beneath
+    ctx.fillStyle = 'rgba(0,0,0,0.20)';
+    ctx.beginPath();
+    ctx.ellipse(48, 50, 40, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Short thick legs (barely visible below armor)
+    ctx.fillStyle = '#4a4030';
+    // Front-left leg
+    ctx.beginPath();
+    ctx.roundRect(18, 38, 10, 12, 2);
+    ctx.fill();
+    // Front-right leg
+    ctx.beginPath();
+    ctx.roundRect(30, 38, 10, 12, 2);
+    ctx.fill();
+    // Rear-left leg
+    ctx.beginPath();
+    ctx.roundRect(54, 38, 10, 12, 2);
+    ctx.fill();
+    // Rear-right leg
+    ctx.beginPath();
+    ctx.roundRect(66, 38, 10, 12, 2);
+    ctx.fill();
+
+    // Main armored body — wide, low, tank-like
+    const bodyGrad = ctx.createLinearGradient(10, 10, 10, 44);
+    bodyGrad.addColorStop(0, '#7a7060');
+    bodyGrad.addColorStop(0.4, '#6a6050');
+    bodyGrad.addColorStop(0.85, '#5a5040');
+    bodyGrad.addColorStop(1, '#3a3028');
+    ctx.fillStyle = bodyGrad;
+    ctx.beginPath();
+    ctx.moveTo(14, 38);
+    ctx.quadraticCurveTo(8, 36, 10, 26);
+    ctx.quadraticCurveTo(12, 14, 26, 10);
+    ctx.quadraticCurveTo(44, 6, 62, 8);
+    ctx.quadraticCurveTo(76, 10, 80, 20);
+    ctx.quadraticCurveTo(84, 30, 80, 38);
+    ctx.quadraticCurveTo(70, 42, 48, 43);
+    ctx.quadraticCurveTo(28, 43, 14, 38);
+    ctx.closePath();
+    ctx.fill();
+
+    // Armor highlight top
+    ctx.fillStyle = 'rgba(160,148,120,0.22)';
+    ctx.beginPath();
+    ctx.ellipse(46, 17, 32, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Scute pattern — rows of raised oval bumps across the back
+    const scuteColor = '#8a7a60';
+    const scuteShadow = '#4a4030';
+    const scuteRows = [
+      // [cx, cy, rx, ry]
+      [24, 20, 5, 4],
+      [35, 15, 6, 4],
+      [46, 12, 6, 4],
+      [57, 14, 6, 4],
+      [67, 18, 5, 4],
+      [74, 26, 4, 3],
+      [20, 30, 4, 3],
+      [31, 26, 5, 4],
+      [43, 23, 5, 4],
+      [55, 24, 5, 4],
+      [65, 28, 4, 3],
+      [24, 36, 4, 3],
+      [37, 34, 5, 3],
+      [50, 33, 5, 3],
+      [62, 34, 4, 3],
+    ] as const;
+    for (const [cx, cy, rx, ry] of scuteRows) {
+      // Shadow under scute
+      ctx.fillStyle = scuteShadow;
+      ctx.beginPath();
+      ctx.ellipse(cx + 1, cy + 1.5, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Scute itself
+      const scuteGrad = ctx.createRadialGradient(cx - 1, cy - 1, 1, cx, cy, rx);
+      scuteGrad.addColorStop(0, '#a09070');
+      scuteGrad.addColorStop(0.5, scuteColor);
+      scuteGrad.addColorStop(1, '#5a5040');
+      ctx.fillStyle = scuteGrad;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Spiky armor ridges along the sides
+    ctx.fillStyle = '#7a6a50';
+    const sideSpikes = [
+      [16, 34, 14, 32, 12, 38],
+      [22, 34, 20, 31, 18, 37],
+      [68, 36, 72, 33, 74, 38],
+      [62, 36, 66, 32, 68, 38],
+    ] as const;
+    for (const [x1, y1, x2, y2, x3, y3] of sideSpikes) {
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.lineTo(x3, y3);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Club tail — right side, bone-colored round knob
+    // Tail shaft
+    ctx.fillStyle = '#8a7a60';
+    ctx.beginPath();
+    ctx.moveTo(78, 28);
+    ctx.quadraticCurveTo(88, 26, 90, 30);
+    ctx.quadraticCurveTo(88, 34, 80, 34);
+    ctx.closePath();
+    ctx.fill();
+    // Club knob
+    const clubGrad = ctx.createRadialGradient(91, 30, 2, 91, 30, 7);
+    clubGrad.addColorStop(0, '#c0b090');
+    clubGrad.addColorStop(0.5, '#9a8a6a');
+    clubGrad.addColorStop(1, '#6a5a40');
+    ctx.fillStyle = clubGrad;
+    ctx.beginPath();
+    ctx.ellipse(91, 30, 6, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Club knob highlight
+    ctx.fillStyle = 'rgba(220,200,160,0.35)';
+    ctx.beginPath();
+    ctx.ellipse(89, 27, 3, 2, -0.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Small head — left side
+    const headGrad = ctx.createLinearGradient(4, 18, 4, 36);
+    headGrad.addColorStop(0, '#7a7060');
+    headGrad.addColorStop(1, '#5a5040');
+    ctx.fillStyle = headGrad;
+    ctx.beginPath();
+    ctx.moveTo(14, 22);
+    ctx.quadraticCurveTo(10, 18, 6, 22);
+    ctx.quadraticCurveTo(2, 26, 4, 32);
+    ctx.quadraticCurveTo(6, 36, 12, 34);
+    ctx.quadraticCurveTo(16, 32, 14, 26);
+    ctx.closePath();
+    ctx.fill();
+
+    // Beak-like mouth
+    ctx.fillStyle = '#4a3a28';
+    ctx.beginPath();
+    ctx.moveTo(4, 32);
+    ctx.lineTo(2, 35);
+    ctx.lineTo(8, 34);
+    ctx.closePath();
+    ctx.fill();
+
+    // Beady eye
+    ctx.fillStyle = '#1a1008';
+    ctx.beginPath();
+    ctx.arc(8, 24, 2, 0, Math.PI * 2);
+    ctx.fill();
+    // Eye highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.beginPath();
+    ctx.arc(9, 23, 0.7, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Neck/head armor banding
+    ctx.strokeStyle = 'rgba(60,50,32,0.4)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(12, 20);
+    ctx.quadraticCurveTo(14, 24, 12, 30);
+    ctx.stroke();
 
     refresh();
   }
