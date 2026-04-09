@@ -84,6 +84,7 @@ export class BootScene extends Phaser.Scene {
     this.makeObstacleBench();
     this.makeHazardCompy();
     this.makeHazardDimorphodon();
+    this.makeHazardStegosaurus();
     this.makeHazardPterodactyl();
     this.makeHazardRock();
     this.makeHazardTriceratops();
@@ -2644,6 +2645,214 @@ export class BootScene extends Phaser.Scene {
     ctx.lineTo(31, 40); ctx.lineTo(29, 33);
     ctx.closePath();
     ctx.fill();
+
+    refresh();
+  }
+
+  private makeHazardStegosaurus(): void {
+    const W = 100, H = 72;
+    const { ctx, refresh } = this.canvas('hazard-stegosaurus', W, H);
+
+    // Shadow beneath
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.beginPath();
+    ctx.ellipse(50, 69, 38, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Main body — large rounded quadruped shape
+    const bodyGrad = ctx.createLinearGradient(15, 14, 15, 62);
+    bodyGrad.addColorStop(0, '#8a7a5a');
+    bodyGrad.addColorStop(0.35, '#7a6a4a');
+    bodyGrad.addColorStop(0.75, '#6a5a3a');
+    bodyGrad.addColorStop(1, '#4a3a24');
+    ctx.fillStyle = bodyGrad;
+    ctx.beginPath();
+    ctx.moveTo(14, 38);
+    ctx.quadraticCurveTo(12, 20, 28, 16);
+    ctx.quadraticCurveTo(44, 12, 62, 14);
+    ctx.quadraticCurveTo(78, 16, 84, 26);
+    ctx.quadraticCurveTo(90, 36, 86, 48);
+    ctx.quadraticCurveTo(82, 58, 72, 60);
+    ctx.quadraticCurveTo(50, 64, 28, 61);
+    ctx.quadraticCurveTo(14, 58, 12, 48);
+    ctx.closePath();
+    ctx.fill();
+
+    // Belly shading underside
+    const bellyGrad = ctx.createLinearGradient(30, 50, 30, 64);
+    bellyGrad.addColorStop(0, 'rgba(0,0,0,0)');
+    bellyGrad.addColorStop(1, 'rgba(0,0,0,0.22)');
+    ctx.fillStyle = bellyGrad;
+    ctx.beginPath();
+    ctx.moveTo(20, 56);
+    ctx.quadraticCurveTo(50, 66, 78, 58);
+    ctx.quadraticCurveTo(50, 62, 20, 56);
+    ctx.closePath();
+    ctx.fill();
+
+    // Textured hide — small bumpy arcs scattered over body
+    ctx.strokeStyle = 'rgba(90, 72, 44, 0.35)';
+    ctx.lineWidth = 1;
+    const bumpData = [
+      [25, 28], [35, 22], [44, 20], [54, 21], [64, 24], [72, 30],
+      [68, 40], [58, 38], [46, 34], [34, 36], [24, 40], [30, 50],
+      [50, 48], [66, 46], [42, 52], [58, 54],
+    ];
+    for (const [bx, by] of bumpData) {
+      ctx.beginPath();
+      ctx.arc(bx, by, 3, Math.PI, 0);
+      ctx.stroke();
+    }
+
+    // Dorsal plates — 6 tall diamond/pentagonal shapes along spine
+    // Plates extend from spine up to near top of canvas (y≈2 to y≈14)
+    // to make them "too tall to jump over"
+    const platePositions = [
+      { x: 32, baseY: 18, width: 10, lean: -1 },
+      { x: 42, baseY: 14, width: 12, lean:  1 },
+      { x: 52, baseY: 13, width: 13, lean: -1 },
+      { x: 62, baseY: 14, width: 12, lean:  1 },
+      { x: 71, baseY: 17, width: 10, lean: -1 },
+      { x: 79, baseY: 22, width:  8, lean:  1 },
+    ];
+    for (const { x, baseY, width, lean } of platePositions) {
+      const plateGrad = ctx.createLinearGradient(x, 2, x, baseY);
+      plateGrad.addColorStop(0, '#9a8a6a');
+      plateGrad.addColorStop(0.5, '#8a7a58');
+      plateGrad.addColorStop(1, '#7a6a4a');
+      ctx.fillStyle = plateGrad;
+      const hw = width / 2;
+      const tipX = x + lean * 3;
+      const tipY = 2;
+      ctx.beginPath();
+      // Pentagon: tip at top, wide diamond middle, narrows at base
+      ctx.moveTo(tipX, tipY);
+      ctx.lineTo(x + hw + 2, baseY - 6);
+      ctx.lineTo(x + hw, baseY);
+      ctx.lineTo(x - hw, baseY);
+      ctx.lineTo(x - hw - 2, baseY - 6);
+      ctx.closePath();
+      ctx.fill();
+      // Plate highlight on leading edge
+      ctx.strokeStyle = 'rgba(180,160,110,0.45)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(tipX, tipY + 1);
+      ctx.lineTo(x - hw - 1, baseY - 7);
+      ctx.stroke();
+      // Plate shading on trailing edge
+      ctx.strokeStyle = 'rgba(60,48,28,0.3)';
+      ctx.beginPath();
+      ctx.moveTo(tipX, tipY + 1);
+      ctx.lineTo(x + hw + 1, baseY - 7);
+      ctx.stroke();
+    }
+
+    // Tail — tapering to the right
+    const tailGrad = ctx.createLinearGradient(82, 44, 100, 52);
+    tailGrad.addColorStop(0, '#7a6a4a');
+    tailGrad.addColorStop(1, '#5a4a30');
+    ctx.fillStyle = tailGrad;
+    ctx.beginPath();
+    ctx.moveTo(82, 38);
+    ctx.quadraticCurveTo(92, 36, 98, 42);
+    ctx.quadraticCurveTo(96, 48, 88, 52);
+    ctx.quadraticCurveTo(84, 52, 82, 48);
+    ctx.closePath();
+    ctx.fill();
+
+    // Thagomizer — 4 bone-colored spikes at tail tip
+    ctx.fillStyle = '#c8b890';
+    const spikeData = [
+      { sx: 94, sy: 38, ex: 100, ey: 32, w: 3 },
+      { sx: 96, sy: 42, ex: 100, ey: 36, w: 2.5 },
+      { sx: 97, sy: 46, ex: 100, ey: 52, w: 2.5 },
+      { sx: 94, sy: 50, ex: 99, ey: 58, w: 3 },
+    ];
+    for (const { sx, sy, ex, ey, w } of spikeData) {
+      const angle = Math.atan2(ey - sy, ex - sx);
+      const perp = angle + Math.PI / 2;
+      ctx.fillStyle = '#c8b890';
+      ctx.beginPath();
+      ctx.moveTo(sx + Math.cos(perp) * w, sy + Math.sin(perp) * w);
+      ctx.lineTo(ex, ey);
+      ctx.lineTo(sx - Math.cos(perp) * w, sy - Math.sin(perp) * w);
+      ctx.closePath();
+      ctx.fill();
+      // Spike shading
+      ctx.fillStyle = 'rgba(100,80,50,0.25)';
+      ctx.beginPath();
+      ctx.moveTo(sx + Math.cos(perp) * w * 0.5, sy + Math.sin(perp) * w * 0.5);
+      ctx.lineTo(ex, ey);
+      ctx.lineTo(sx, sy);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Head — small, low, at left side
+    ctx.fillStyle = '#6a5a3a';
+    ctx.beginPath();
+    ctx.ellipse(10, 44, 12, 8, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+    // Head shading
+    const headShade = ctx.createLinearGradient(2, 38, 22, 52);
+    headShade.addColorStop(0, 'rgba(120,100,66,0.2)');
+    headShade.addColorStop(1, 'rgba(0,0,0,0.25)');
+    ctx.fillStyle = headShade;
+    ctx.beginPath();
+    ctx.ellipse(10, 44, 12, 8, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+    // Snout beak-like tip
+    ctx.fillStyle = '#5a4a2a';
+    ctx.beginPath();
+    ctx.moveTo(0, 43); ctx.lineTo(-4, 45); ctx.lineTo(0, 48); ctx.closePath(); ctx.fill();
+    // Eye
+    ctx.fillStyle = '#aa5500';
+    ctx.beginPath();
+    ctx.arc(8, 41, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#111';
+    ctx.beginPath();
+    ctx.arc(8, 41, 1.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.beginPath();
+    ctx.arc(7.2, 40.3, 0.7, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Legs — 4 thick columnar elephant-like legs
+    const legPositions = [
+      { x: 28, front: true },
+      { x: 42, front: false },
+      { x: 58, front: false },
+      { x: 72, front: true },
+    ];
+    for (const { x } of legPositions) {
+      const legG = ctx.createLinearGradient(x, 54, x + 10, 68);
+      legG.addColorStop(0, '#7a6a4a');
+      legG.addColorStop(1, '#4a3a24');
+      ctx.fillStyle = legG;
+      ctx.beginPath();
+      ctx.roundRect(x - 5, 54, 10, 16, 3);
+      ctx.fill();
+      // Leg muscle highlight
+      ctx.fillStyle = 'rgba(160,130,90,0.22)';
+      ctx.beginPath();
+      ctx.ellipse(x - 1, 58, 3, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Foot pad
+      ctx.fillStyle = '#3a2a14';
+      ctx.beginPath();
+      ctx.ellipse(x, 69, 7, 3, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Toe nubs
+      ctx.fillStyle = '#2a1a0a';
+      for (let t = -2; t <= 2; t++) {
+        ctx.beginPath();
+        ctx.arc(x + t * 2.2, 71, 1.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
 
     refresh();
   }
