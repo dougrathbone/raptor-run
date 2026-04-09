@@ -288,7 +288,12 @@ export class SpawnManager {
   }
 
   private spawnAnkylosaurus(scrollSpeed: number): void {
-    this.spawnTriceratops(scrollSpeed);
+    const obstacle = new Obstacle(
+      this.scene, GAME_WIDTH + 60, GROUND_Y - 26,
+      'hazard-ankylosaurus', 'ankylosaurus',
+    );
+    obstacle.setVelocityX(-scrollSpeed * 0.7);
+    this.obstacleGroup.add(obstacle);
   }
 
   // ===== PLATFORMS =====

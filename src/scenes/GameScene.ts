@@ -232,6 +232,17 @@ export class GameScene extends Phaser.Scene {
         this.raptor.x, this.raptor.y, obs.x, obs.y,
       );
       if (dist < ROAR_STUN_RADIUS) {
+        // Ankylosaurus is armored — immune to roar
+        if (obs.obstacleType === 'ankylosaurus') {
+          // Deflect effect: brief white flash + "CLANG" text
+          obs.setTint(0xffffff);
+          this.time.delayedCall(150, () => {
+            if (obs.active) obs.clearTint();
+          });
+          this.showFloatingText('CLANG!', obs.x, obs.y - 20, '#aaaaaa', 18);
+          return;
+        }
+
         // Flash and destroy
         this.tweens.add({
           targets: obs,
