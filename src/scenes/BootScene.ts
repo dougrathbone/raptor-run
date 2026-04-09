@@ -85,6 +85,8 @@ export class BootScene extends Phaser.Scene {
     this.makeHazardCompy();
     this.makeHazardDimorphodon();
     this.makeHazardStegosaurus();
+    this.makeHazardDilophosaurus();
+    this.makeHazardVenom();
     this.makeHazardPterodactyl();
     this.makeHazardRock();
     this.makeHazardTriceratops();
@@ -3467,6 +3469,245 @@ export class BootScene extends Phaser.Scene {
 
   refresh();
 }
+
+  // ================================================================
+  //  DILOPHOSAURUS — stationary ranged bipedal theropod with crests
+  // ================================================================
+  private makeHazardDilophosaurus(): void {
+    const W = 80, H = 70;
+    const { ctx, refresh } = this.canvas('hazard-dilophosaurus', W, H);
+
+    // --- SHADOW ---
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.beginPath();
+    ctx.ellipse(42, 66, 22, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // --- TAIL (long, thin, low, sweeping right) ---
+    ctx.strokeStyle = '#3a4a1a';
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(60, 52);
+    ctx.quadraticCurveTo(72, 55, 78, 50);
+    ctx.stroke();
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(78, 50);
+    ctx.quadraticCurveTo(82, 46, 79, 42);
+    ctx.stroke();
+
+    // --- BODY ---
+    const bodyGrad = ctx.createLinearGradient(30, 30, 65, 60);
+    bodyGrad.addColorStop(0, '#5a6a2a');
+    bodyGrad.addColorStop(0.5, '#4a5a2a');
+    bodyGrad.addColorStop(1, '#3a4a1a');
+    ctx.fillStyle = bodyGrad;
+    ctx.beginPath();
+    ctx.ellipse(48, 48, 18, 12, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Body outline
+    ctx.strokeStyle = '#3a4a1a';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.ellipse(48, 48, 18, 12, -0.3, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // --- LEGS ---
+    ctx.strokeStyle = '#3a4a1a';
+    ctx.lineWidth = 4;
+    ctx.lineCap = 'round';
+    // Back leg
+    ctx.beginPath();
+    ctx.moveTo(54, 56);
+    ctx.lineTo(56, 63);
+    ctx.lineTo(52, 66);
+    ctx.stroke();
+    // Front leg
+    ctx.beginPath();
+    ctx.moveTo(44, 57);
+    ctx.lineTo(45, 63);
+    ctx.lineTo(42, 66);
+    ctx.stroke();
+
+    // --- FEATHERED FOREARMS ---
+    ctx.strokeStyle = '#6a7a3a';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(37, 44);
+    ctx.lineTo(28, 50);
+    ctx.stroke();
+    // Feather barbs
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 4; i++) {
+      const tx = 37 - i * 2.2;
+      const ty = 44 + i * 1.5;
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(tx - 3, ty + 3);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(tx, ty);
+      ctx.lineTo(tx + 2, ty + 3);
+      ctx.stroke();
+    }
+
+    // --- NECK (upright ~60 degrees) ---
+    const neckGrad = ctx.createLinearGradient(36, 30, 40, 48);
+    neckGrad.addColorStop(0, '#5a6a2a');
+    neckGrad.addColorStop(1, '#4a5a2a');
+    ctx.fillStyle = neckGrad;
+    ctx.beginPath();
+    ctx.moveTo(34, 48);
+    ctx.quadraticCurveTo(30, 38, 34, 28);
+    ctx.quadraticCurveTo(40, 26, 42, 36);
+    ctx.quadraticCurveTo(42, 44, 38, 48);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#3a4a1a';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // --- FRILL (expandable neck frill, fanned out) ---
+    const frillColors = ['#ff8800', '#ffcc00', '#ff6600', '#ffaa00'];
+    for (let i = 0; i < 8; i++) {
+      const angle = (-0.6 + i * 0.18) * Math.PI;
+      const fx = 36 + Math.cos(angle) * 16;
+      const fy = 34 + Math.sin(angle) * 14;
+      ctx.strokeStyle = frillColors[i % frillColors.length];
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(36, 34);
+      ctx.lineTo(fx, fy);
+      ctx.stroke();
+      // Dark spot at tip
+      ctx.fillStyle = '#441100';
+      ctx.beginPath();
+      ctx.arc(fx, fy, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // Frill membrane
+    ctx.fillStyle = 'rgba(255, 140, 0, 0.2)';
+    ctx.beginPath();
+    ctx.moveTo(36, 34);
+    for (let i = 0; i < 8; i++) {
+      const angle = (-0.6 + i * 0.18) * Math.PI;
+      ctx.lineTo(36 + Math.cos(angle) * 16, 34 + Math.sin(angle) * 14);
+    }
+    ctx.closePath();
+    ctx.fill();
+
+    // --- HEAD ---
+    const headGrad = ctx.createLinearGradient(14, 18, 36, 32);
+    headGrad.addColorStop(0, '#5a6a2a');
+    headGrad.addColorStop(1, '#4a5a2a');
+    ctx.fillStyle = headGrad;
+    ctx.beginPath();
+    ctx.ellipse(24, 26, 13, 8, -0.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#3a4a1a';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // --- TWIN CRESTS on head ---
+    for (let c = 0; c < 2; c++) {
+      const crestGrad = ctx.createLinearGradient(18 + c * 4, 12, 26 + c * 4, 22);
+      crestGrad.addColorStop(0, '#cc6644');
+      crestGrad.addColorStop(1, '#aa4422');
+      ctx.fillStyle = crestGrad;
+      ctx.beginPath();
+      ctx.moveTo(18 + c * 4, 22);
+      ctx.lineTo(16 + c * 4, 12);
+      ctx.lineTo(22 + c * 4, 11);
+      ctx.lineTo(24 + c * 4, 20);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = '#882200';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // --- EYE ---
+    ctx.fillStyle = '#ffee88';
+    ctx.beginPath();
+    ctx.arc(19, 23, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#111100';
+    ctx.beginPath();
+    ctx.arc(18.5, 23, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+    // Eye shine
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.beginPath();
+    ctx.arc(17.8, 22.3, 0.7, 0, Math.PI * 2);
+    ctx.fill();
+
+    // --- OPEN MOUTH / teeth (about to spit) ---
+    ctx.fillStyle = '#cc2200';
+    ctx.beginPath();
+    ctx.moveTo(11, 26);
+    ctx.lineTo(7, 24);
+    ctx.lineTo(7, 28);
+    ctx.closePath();
+    ctx.fill();
+    // Upper teeth
+    ctx.fillStyle = '#eeeecc';
+    for (let t = 0; t < 3; t++) {
+      ctx.beginPath();
+      ctx.moveTo(10 - t * 1.2, 25.5);
+      ctx.lineTo(9.5 - t * 1.2, 28);
+      ctx.lineTo(9 - t * 1.2, 25.5);
+      ctx.fill();
+    }
+    // Venom drip hint at mouth tip
+    ctx.fillStyle = '#88dd00';
+    ctx.beginPath();
+    ctx.arc(7.5, 27.5, 1.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // --- BELLY stripes (subtle camouflage) ---
+    ctx.strokeStyle = 'rgba(80, 100, 30, 0.4)';
+    ctx.lineWidth = 1;
+    for (let s = 0; s < 4; s++) {
+      ctx.beginPath();
+      ctx.moveTo(36 + s * 5, 52);
+      ctx.lineTo(40 + s * 5, 44);
+      ctx.stroke();
+    }
+
+    refresh();
+  }
+
+  private makeHazardVenom(): void {
+    const W = 16, H = 16;
+    const { ctx, refresh } = this.canvas('hazard-venom', W, H);
+
+    // Glowing green glob
+    const grad = ctx.createRadialGradient(8, 8, 1, 8, 8, 7);
+    grad.addColorStop(0, '#bbff44');
+    grad.addColorStop(0.4, '#66cc00');
+    grad.addColorStop(0.8, '#338800');
+    grad.addColorStop(1, 'rgba(30, 80, 0, 0.3)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(8, 8, 7, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Inner shine
+    ctx.fillStyle = 'rgba(220, 255, 150, 0.5)';
+    ctx.beginPath();
+    ctx.ellipse(6, 6, 2.5, 2, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Drip trail
+    ctx.fillStyle = '#55aa00';
+    ctx.beginPath();
+    ctx.ellipse(12, 13, 1.5, 2.5, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    refresh();
+  }
 
   private makePlatform(): void {
     const W = 120, H = 16;
