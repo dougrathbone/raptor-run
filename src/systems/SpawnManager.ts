@@ -209,7 +209,17 @@ export class SpawnManager {
   }
 
   private spawnCompyPack(scrollSpeed: number): void {
-    this.spawnLog(scrollSpeed); // temporary fallback until Task 5
+    const count = Phaser.Math.Between(3, 4);
+    for (let i = 0; i < count; i++) {
+      const xOffset = i * Phaser.Math.Between(18, 30);
+      const y = Phaser.Math.Between(GROUND_Y - 28, GROUND_Y - 10);
+      const compy = new Obstacle(
+        this.scene, GAME_WIDTH + 40 + xOffset, y,
+        'hazard-compy', 'compy',
+      );
+      compy.setVelocityX(-scrollSpeed * 1.3);
+      this.obstacleGroup.add(compy);
+    }
   }
 
   private spawnDimorphodon(scrollSpeed: number): void {
