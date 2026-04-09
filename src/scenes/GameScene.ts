@@ -13,6 +13,7 @@ import { SpawnManager } from '../systems/SpawnManager';
 import { GrowthSystem } from '../systems/GrowthSystem';
 import { ScoreManager } from '../systems/ScoreManager';
 import { BiomeManager } from '../systems/BiomeManager';
+import { ChaseManager } from '../systems/ChaseManager';
 import { HUD } from '../ui/HUD';
 import {
   GAME_WIDTH,
@@ -31,6 +32,8 @@ export class GameScene extends Phaser.Scene {
   private scoreManager!: ScoreManager;
   private biomeManager!: BiomeManager;
   private hud!: HUD;
+  private chaseManager!: ChaseManager;
+  private chaseSpeedMultiplier = 1;
 
   private foodGroup!: Phaser.Physics.Arcade.Group;
   private obstacleGroup!: Phaser.Physics.Arcade.Group;
@@ -83,6 +86,18 @@ export class GameScene extends Phaser.Scene {
     this.growthSystem = new GrowthSystem(() => this.onRaptorEvolve());
     this.spawnManager = new SpawnManager(
       this, this.foodGroup, this.obstacleGroup, this.jumpableGroup, this.platformGroup,
+    );
+
+    this.chaseManager = new ChaseManager(
+      this,
+      (multiplier) => { this.chaseSpeedMultiplier = multiplier; },
+      (bonus) => {
+        this.scoreManager.addChaseBonus(bonus);
+        this.showFloatingText(`ESCAPED! +${bonus}`, GAME_WIDTH / 2, GAME_HEIGHT / 2, '#44ff44', 36);
+        // Restore biome background color
+        const biome = this.biomeManager.getCurrentBiome();
+        this.cameras.main.setBackgroundColor(biome.bgColor);
+      },
     );
 
     // HUD
@@ -143,13 +158,22 @@ export class GameScene extends Phaser.Scene {
     this.handleInput();
     this.raptor.update(time, delta);
 
-    // Scroll speed includes stage bonus
-    const effectiveSpeed = this.scrollManager.getSpeed() + this.raptor.speedBonus;
+    // Scroll speed includes stage bonus and chase multiplier
+    const baseSpeed = this.scrollManager.getSpeed() + this.raptor.speedBonus;
+    const effectiveSpeed = baseSpeed * this.chaseSpeedMultiplier;
     this.scrollManager.setEffectiveSpeed(effectiveSpeed);
     this.scrollManager.update(delta);
 
     this.spawnManager.update(time, effectiveSpeed, this.scoreManager.getDistance());
     this.scoreManager.updateDistance(delta, effectiveSpeed);
+
+    this.chaseManager.update(delta);
+
+    // T-Rex chase check
+    const distance = this.scoreManager.getDistance();
+    if (!this.chaseManager.isActive) {
+      this.chaseManager.tryTrigger(distance);
+    }
 
     // Check for biome transitions based on distance traveled
     this.biomeManager.update(this.scoreManager.getDistance());
@@ -335,6 +359,8 @@ export class GameScene extends Phaser.Scene {
       this.raptor.play('dino-dead-anim');
     }
     this.scoreManager.saveHighScore();
+
+    this.chaseManager.cleanup();
 
     this.time.delayedCall(600, () => {
       this.scene.start('GameOverScene', {

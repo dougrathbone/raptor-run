@@ -88,6 +88,7 @@ export class BootScene extends Phaser.Scene {
     this.makeHazardDilophosaurus();
     this.makeHazardVenom();
     this.makeHazardAnkylosaurus();
+    this.makeHazardTrex();
     this.makeHazardPterodactyl();
     this.makeHazardRock();
     this.makeHazardTriceratops();
@@ -3884,6 +3885,429 @@ export class BootScene extends Phaser.Scene {
     ctx.moveTo(12, 20);
     ctx.quadraticCurveTo(14, 24, 12, 30);
     ctx.stroke();
+
+    refresh();
+  }
+
+  // ================================================================
+  //  T-REX — Massive bipedal apex predator
+  //  Enormous head with powerful jaw, tiny arms, muscular legs,
+  //  thick counterbalancing tail. The BIGGEST sprite in the game.
+  // ================================================================
+  private makeHazardTrex(): void {
+    const W = 160, H = 120;
+    const { ctx, refresh } = this.canvas('hazard-trex', W, H);
+
+    const bodyColor = '#2a3a1a';
+    const highlightColor = '#4a5a2a';
+    const bellyColor = '#3a4a28';
+    const darkAccent = '#1a2a10';
+
+    // --- TAIL (thick, heavy, extends to the right for counterbalance) ---
+    const tailGrad = ctx.createLinearGradient(90, 40, 160, 55);
+    tailGrad.addColorStop(0, bodyColor);
+    tailGrad.addColorStop(0.5, highlightColor);
+    tailGrad.addColorStop(1, '#3a4a22');
+    ctx.fillStyle = tailGrad;
+    ctx.beginPath();
+    ctx.moveTo(90, 42);
+    ctx.bezierCurveTo(110, 38, 130, 40, 155, 48);
+    ctx.bezierCurveTo(160, 50, 160, 56, 155, 58);
+    ctx.bezierCurveTo(130, 62, 110, 58, 90, 56);
+    ctx.closePath();
+    ctx.fill();
+
+    // Tail scale/stripe pattern
+    ctx.strokeStyle = 'rgba(74,90,42,0.5)';
+    ctx.lineWidth = 1.5;
+    for (let i = 0; i < 6; i++) {
+      const tx = 100 + i * 10;
+      ctx.beginPath();
+      ctx.moveTo(tx, 43 + i * 0.8);
+      ctx.quadraticCurveTo(tx + 3, 50 + i * 0.3, tx, 56 - i * 0.5);
+      ctx.stroke();
+    }
+
+    // --- BODY (massive, barrel-shaped torso) ---
+    const bodyGrad = ctx.createRadialGradient(70, 50, 5, 70, 50, 40);
+    bodyGrad.addColorStop(0, highlightColor);
+    bodyGrad.addColorStop(0.4, bodyColor);
+    bodyGrad.addColorStop(1, darkAccent);
+    ctx.fillStyle = bodyGrad;
+    ctx.beginPath();
+    ctx.moveTo(50, 30);
+    ctx.bezierCurveTo(60, 22, 80, 20, 95, 30);
+    ctx.bezierCurveTo(100, 38, 98, 55, 95, 65);
+    ctx.bezierCurveTo(85, 72, 60, 72, 50, 65);
+    ctx.bezierCurveTo(45, 55, 45, 40, 50, 30);
+    ctx.closePath();
+    ctx.fill();
+
+    // Body muscle highlights
+    ctx.strokeStyle = 'rgba(74,90,42,0.3)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(60, 35);
+    ctx.quadraticCurveTo(75, 30, 88, 35);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(55, 50);
+    ctx.quadraticCurveTo(72, 45, 90, 50);
+    ctx.stroke();
+
+    // Body scale texture
+    ctx.fillStyle = 'rgba(74,90,42,0.2)';
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 5; col++) {
+        const sx = 55 + col * 8 + (row % 2) * 4;
+        const sy = 32 + row * 9;
+        ctx.beginPath();
+        ctx.ellipse(sx, sy, 3, 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Belly (lighter underside)
+    const bellyGrad = ctx.createLinearGradient(60, 55, 60, 72);
+    bellyGrad.addColorStop(0, 'rgba(58,74,40,0.5)');
+    bellyGrad.addColorStop(1, 'rgba(80,95,55,0.4)');
+    ctx.fillStyle = bellyGrad;
+    ctx.beginPath();
+    ctx.moveTo(55, 58);
+    ctx.quadraticCurveTo(72, 70, 90, 58);
+    ctx.quadraticCurveTo(72, 74, 55, 58);
+    ctx.fill();
+
+    // --- LEGS (massive, muscular hind legs) ---
+    // Left leg (behind, darker)
+    ctx.fillStyle = darkAccent;
+    ctx.beginPath();
+    ctx.moveTo(68, 62);
+    ctx.bezierCurveTo(64, 75, 60, 90, 58, 105);
+    ctx.lineTo(52, 105);
+    ctx.bezierCurveTo(54, 95, 55, 80, 62, 62);
+    ctx.closePath();
+    ctx.fill();
+
+    // Left foot
+    ctx.fillStyle = '#1a2510';
+    ctx.beginPath();
+    ctx.moveTo(48, 105);
+    ctx.lineTo(60, 105);
+    ctx.lineTo(62, 110);
+    ctx.lineTo(56, 112);
+    ctx.lineTo(53, 110);
+    ctx.lineTo(48, 112);
+    ctx.lineTo(45, 108);
+    ctx.closePath();
+    ctx.fill();
+
+    // Left claws
+    ctx.fillStyle = '#e8dcc0';
+    ctx.beginPath();
+    ctx.moveTo(48, 112);
+    ctx.lineTo(44, 117);
+    ctx.lineTo(47, 114);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(53, 112);
+    ctx.lineTo(52, 118);
+    ctx.lineTo(55, 114);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(58, 111);
+    ctx.lineTo(60, 116);
+    ctx.lineTo(61, 112);
+    ctx.fill();
+
+    // Right leg (front, lighter)
+    const legGrad = ctx.createLinearGradient(75, 62, 75, 105);
+    legGrad.addColorStop(0, bodyColor);
+    legGrad.addColorStop(0.5, highlightColor);
+    legGrad.addColorStop(1, bodyColor);
+    ctx.fillStyle = legGrad;
+    ctx.beginPath();
+    ctx.moveTo(80, 62);
+    ctx.bezierCurveTo(84, 75, 82, 90, 78, 105);
+    ctx.lineTo(70, 105);
+    ctx.bezierCurveTo(72, 92, 74, 78, 74, 62);
+    ctx.closePath();
+    ctx.fill();
+
+    // Leg muscle bulge
+    ctx.fillStyle = 'rgba(74,90,42,0.3)';
+    ctx.beginPath();
+    ctx.ellipse(78, 75, 5, 10, -0.15, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Right foot
+    ctx.fillStyle = '#222e14';
+    ctx.beginPath();
+    ctx.moveTo(66, 105);
+    ctx.lineTo(80, 105);
+    ctx.lineTo(82, 110);
+    ctx.lineTo(76, 112);
+    ctx.lineTo(73, 110);
+    ctx.lineTo(68, 112);
+    ctx.lineTo(64, 108);
+    ctx.closePath();
+    ctx.fill();
+
+    // Right claws
+    ctx.fillStyle = '#e8dcc0';
+    ctx.beginPath();
+    ctx.moveTo(68, 112);
+    ctx.lineTo(64, 117);
+    ctx.lineTo(67, 114);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(73, 112);
+    ctx.lineTo(72, 118);
+    ctx.lineTo(75, 114);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(78, 111);
+    ctx.lineTo(80, 116);
+    ctx.lineTo(81, 112);
+    ctx.fill();
+
+    // --- TINY ARMS (comically small, vestigial) ---
+    ctx.fillStyle = highlightColor;
+    ctx.beginPath();
+    ctx.moveTo(52, 42);
+    ctx.bezierCurveTo(48, 46, 44, 50, 42, 52);
+    ctx.bezierCurveTo(43, 54, 45, 54, 46, 52);
+    ctx.bezierCurveTo(48, 48, 50, 46, 54, 44);
+    ctx.closePath();
+    ctx.fill();
+
+    // Tiny claws on arm
+    ctx.fillStyle = '#e8dcc0';
+    ctx.beginPath();
+    ctx.moveTo(42, 52);
+    ctx.lineTo(40, 55);
+    ctx.lineTo(42, 54);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(44, 53);
+    ctx.lineTo(42, 56);
+    ctx.lineTo(44, 55);
+    ctx.fill();
+
+    // --- NECK (thick, muscular) ---
+    const neckGrad = ctx.createLinearGradient(40, 25, 50, 40);
+    neckGrad.addColorStop(0, bodyColor);
+    neckGrad.addColorStop(1, highlightColor);
+    ctx.fillStyle = neckGrad;
+    ctx.beginPath();
+    ctx.moveTo(50, 30);
+    ctx.bezierCurveTo(45, 25, 38, 18, 32, 12);
+    ctx.bezierCurveTo(28, 10, 25, 12, 25, 16);
+    ctx.bezierCurveTo(28, 22, 35, 30, 45, 38);
+    ctx.quadraticCurveTo(48, 40, 52, 40);
+    ctx.closePath();
+    ctx.fill();
+
+    // --- HEAD (enormous, ~35% of body length) ---
+    const headGrad = ctx.createRadialGradient(22, 14, 3, 22, 14, 20);
+    headGrad.addColorStop(0, highlightColor);
+    headGrad.addColorStop(0.6, bodyColor);
+    headGrad.addColorStop(1, darkAccent);
+    ctx.fillStyle = headGrad;
+    ctx.beginPath();
+    // Top of head / brow ridge
+    ctx.moveTo(32, 8);
+    ctx.bezierCurveTo(28, 2, 18, 0, 8, 4);
+    // Snout tip
+    ctx.bezierCurveTo(2, 6, 0, 10, 0, 14);
+    // Lower jaw line
+    ctx.bezierCurveTo(0, 18, 4, 24, 10, 26);
+    // Back of jaw
+    ctx.bezierCurveTo(18, 28, 28, 26, 34, 22);
+    // Connect back to top
+    ctx.bezierCurveTo(36, 16, 36, 10, 32, 8);
+    ctx.closePath();
+    ctx.fill();
+
+    // Heavy brow ridge
+    ctx.fillStyle = darkAccent;
+    ctx.beginPath();
+    ctx.moveTo(32, 8);
+    ctx.bezierCurveTo(28, 4, 18, 3, 10, 6);
+    ctx.bezierCurveTo(18, 5, 28, 6, 32, 10);
+    ctx.closePath();
+    ctx.fill();
+
+    // Jaw separation line
+    ctx.strokeStyle = darkAccent;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(2, 14);
+    ctx.bezierCurveTo(10, 16, 22, 18, 34, 18);
+    ctx.stroke();
+
+    // --- TEETH (upper jaw, 8-10 large serrated teeth) ---
+    ctx.fillStyle = '#f0e8d0';
+    const teethUpper = [
+      { x: 3, y: 13, h: 5 },
+      { x: 6, y: 13, h: 6 },
+      { x: 9, y: 13, h: 7 },
+      { x: 12, y: 14, h: 6 },
+      { x: 15, y: 14, h: 7 },
+      { x: 18, y: 15, h: 6 },
+      { x: 21, y: 15, h: 5 },
+      { x: 24, y: 16, h: 5 },
+      { x: 27, y: 16, h: 4 },
+      { x: 30, y: 17, h: 3 },
+    ];
+    teethUpper.forEach(t => {
+      ctx.beginPath();
+      ctx.moveTo(t.x - 1.2, t.y);
+      ctx.lineTo(t.x, t.y + t.h);
+      ctx.lineTo(t.x + 1.2, t.y);
+      ctx.closePath();
+      ctx.fill();
+    });
+
+    // Lower jaw teeth (smaller, pointing up)
+    const teethLower = [
+      { x: 4, y: 16, h: -4 },
+      { x: 7, y: 16, h: -5 },
+      { x: 10, y: 17, h: -5 },
+      { x: 13, y: 17, h: -4 },
+      { x: 16, y: 18, h: -5 },
+      { x: 19, y: 18, h: -4 },
+      { x: 22, y: 18, h: -3 },
+      { x: 25, y: 18, h: -3 },
+    ];
+    teethLower.forEach(t => {
+      ctx.beginPath();
+      ctx.moveTo(t.x - 1, t.y);
+      ctx.lineTo(t.x, t.y + t.h);
+      ctx.lineTo(t.x + 1, t.y);
+      ctx.closePath();
+      ctx.fill();
+    });
+
+    // Tooth serration detail
+    ctx.strokeStyle = 'rgba(200,190,170,0.4)';
+    ctx.lineWidth = 0.5;
+    teethUpper.forEach(t => {
+      if (t.h > 4) {
+        ctx.beginPath();
+        ctx.moveTo(t.x - 0.5, t.y + 1);
+        ctx.lineTo(t.x, t.y + t.h - 1);
+        ctx.stroke();
+      }
+    });
+
+    // --- EYE (fierce amber with heavy brow) ---
+    // Eye socket shadow
+    ctx.fillStyle = 'rgba(10,10,5,0.5)';
+    ctx.beginPath();
+    ctx.ellipse(26, 10, 5, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Eye
+    ctx.fillStyle = '#cc8800';
+    ctx.beginPath();
+    ctx.ellipse(26, 10, 3.5, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Amber iris gradient
+    const eyeGrad = ctx.createRadialGradient(26, 10, 0, 26, 10, 3.5);
+    eyeGrad.addColorStop(0, '#ffaa00');
+    eyeGrad.addColorStop(0.5, '#cc7700');
+    eyeGrad.addColorStop(1, '#884400');
+    ctx.fillStyle = eyeGrad;
+    ctx.beginPath();
+    ctx.ellipse(26, 10, 3.5, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Slit pupil
+    ctx.fillStyle = '#111100';
+    ctx.beginPath();
+    ctx.ellipse(26, 10, 1.2, 2.8, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Eye highlight
+    ctx.fillStyle = 'rgba(255,255,200,0.6)';
+    ctx.beginPath();
+    ctx.ellipse(27.5, 8.5, 1, 0.8, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Heavy brow ridge over eye
+    ctx.fillStyle = darkAccent;
+    ctx.beginPath();
+    ctx.moveTo(22, 7);
+    ctx.bezierCurveTo(24, 5, 28, 5, 30, 7);
+    ctx.bezierCurveTo(28, 6, 24, 6, 22, 7);
+    ctx.fill();
+
+    // --- NOSTRIL ---
+    ctx.fillStyle = '#111';
+    ctx.beginPath();
+    ctx.ellipse(4, 8, 1.5, 1, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // --- HEAD SCALE TEXTURE ---
+    ctx.fillStyle = 'rgba(74,90,42,0.15)';
+    for (let i = 0; i < 8; i++) {
+      const hx = 8 + i * 3;
+      const hy = 5 + Math.sin(i) * 2;
+      ctx.beginPath();
+      ctx.ellipse(hx, hy, 1.5, 1, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Lower jaw detail / ridges
+    ctx.strokeStyle = 'rgba(74,90,42,0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(6, 22);
+    ctx.quadraticCurveTo(16, 25, 28, 22);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(8, 24);
+    ctx.quadraticCurveTo(16, 27, 26, 24);
+    ctx.stroke();
+
+    // --- NECK MUSCLE LINES ---
+    ctx.strokeStyle = 'rgba(74,90,42,0.25)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(34, 20);
+    ctx.quadraticCurveTo(40, 28, 48, 35);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(30, 24);
+    ctx.quadraticCurveTo(36, 32, 44, 38);
+    ctx.stroke();
+
+    // --- DORSAL RIDGE (small bumps along spine) ---
+    ctx.fillStyle = '#1e2e12';
+    for (let i = 0; i < 10; i++) {
+      let rx: number, ry: number;
+      if (i < 3) {
+        // Along neck
+        rx = 32 + i * 5;
+        ry = 10 + i * 6;
+      } else if (i < 7) {
+        // Along back
+        rx = 52 + (i - 3) * 10;
+        ry = 22 + (i - 3) * 2;
+      } else {
+        // Along tail
+        rx = 92 + (i - 7) * 12;
+        ry = 40 + (i - 7) * 2;
+      }
+      ctx.beginPath();
+      ctx.moveTo(rx - 2, ry + 2);
+      ctx.lineTo(rx, ry - 2);
+      ctx.lineTo(rx + 2, ry + 2);
+      ctx.closePath();
+      ctx.fill();
+    }
 
     refresh();
   }

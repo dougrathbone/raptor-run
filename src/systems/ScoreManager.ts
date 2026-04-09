@@ -48,6 +48,11 @@ export class ScoreManager {
     this.score += GROWTH_BONUS;
   }
 
+  /** Bonus for surviving a T-Rex chase */
+  addChaseBonus(bonus: number): void {
+    this.score += bonus;
+  }
+
   /** Called every frame to track how far the raptor has run */
   updateDistance(delta: number, speed: number): void {
     // Convert pixels to "meters" (10 pixels = 1 meter for nice numbers)
