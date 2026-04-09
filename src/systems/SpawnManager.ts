@@ -1,0 +1,244 @@
+// ======================
+// Spawn Manager
+// Spawns food, obstacles, hazards, and platforms.
+// Adapts hazard types based on current biome.
+// ======================
+
+import Phaser from 'phaser';
+import { Food, FoodType } from '../entities/Food';
+import { Obstacle, ObstacleType } from '../entities/Obstacle';
+import { Platform } from '../entities/Platform';
+import {
+  GAME_WIDTH,
+  GROUND_Y,
+  FOOD_SPAWN_INTERVAL,
+  OBSTACLE_SPAWN_INTERVAL,
+  PLATFORM_SPAWN_INTERVAL,
+  PLATFORM_Y_MIN,
+  PLATFORM_Y_MAX,
+} from '../utils/constants';
+
+export class SpawnManager {
+  private scene: Phaser.Scene;
+  private foodGroup: Phaser.Physics.Arcade.Group;
+  private obstacleGroup: Phaser.Physics.Arcade.Group;
+  private jumpableGroup: Phaser.Physics.Arcade.Group;
+  private platformGroup: Phaser.Physics.Arcade.StaticGroup;
+
+  private lastFoodTime = 0;
+  private lastObstacleTime = 0;
+  private lastPlatformTime = 0;
+
+  constructor(
+    scene: Phaser.Scene,
+    foodGroup: Phaser.Physics.Arcade.Group,
+    obstacleGroup: Phaser.Physics.Arcade.Group,
+    jumpableGroup: Phaser.Physics.Arcade.Group,
+    platformGroup: Phaser.Physics.Arcade.StaticGroup,
+  ) {
+    this.scene = scene;
+    this.foodGroup = foodGroup;
+    this.obstacleGroup = obstacleGroup;
+    this.jumpableGroup = jumpableGroup;
+    this.platformGroup = platformGroup;
+  }
+
+  update(time: number, scrollSpeed: number): void {
+    if (time - this.lastFoodTime > FOOD_SPAWN_INTERVAL) {
+      this.spawnFood(scrollSpeed);
+      this.lastFoodTime = time;
+    }
+
+    if (time - this.lastObstacleTime > OBSTACLE_SPAWN_INTERVAL) {
+      this.spawnObstacle(scrollSpeed);
+      this.lastObstacleTime = time;
+    }
+
+    if (time - this.lastPlatformTime > PLATFORM_SPAWN_INTERVAL) {
+      this.spawnPlatform(scrollSpeed);
+      this.lastPlatformTime = time;
+    }
+
+    // Update velocities for moving objects
+    this.foodGroup.setVelocityX(-scrollSpeed);
+    this.obstacleGroup.getChildren().forEach((child) => {
+      const obs = child as Obstacle;
+      if (obs.obstacleType === 'pterodactyl') {
+        obs.setVelocityX(-scrollSpeed * 1.2);
+      } else if (obs.obstacleType === 'triceratops') {
+        obs.setVelocityX(-scrollSpeed * 1.5);
+      } else if (obs.obstacleType !== 'rock') {
+        obs.setVelocityX(-scrollSpeed);
+      }
+    });
+    this.jumpableGroup.setVelocityX(-scrollSpeed);
+
+    // Move platforms manually (they're static bodies so no velocity)
+    this.platformGroup.getChildren().forEach((child) => {
+      const plat = child as Platform;
+      plat.x -= scrollSpeed * (this.scene.game.loop.delta / 1000);
+      (plat.body as Phaser.Physics.Arcade.StaticBody).updateFromGameObject();
+    });
+
+    this.cleanup(scrollSpeed);
+  }
+
+  // ===== FOOD =====
+
+  private spawnFood(scrollSpeed: number): void {
+    const types: FoodType[] = ['bug', 'lizard', 'fish', 'egg'];
+    const weights = [40, 30, 20, 10];
+    const type = this.weightedPick(types, weights);
+
+    const roll = Math.random();
+    let y: number;
+    if (roll < 0.5) {
+      y = Phaser.Math.Between(GROUND_Y - 40, GROUND_Y - 12);
+    } else if (roll < 0.8) {
+      y = Phaser.Math.Between(GROUND_Y - 90, GROUND_Y - 50);
+    } else {
+      y = Phaser.Math.Between(GROUND_Y - 130, GROUND_Y - 90);
+    }
+
+    const food = new Food(this.scene, GAME_WIDTH + 40, y, type);
+    food.setVelocityX(-scrollSpeed);
+    this.foodGroup.add(food);
+  }
+
+  // ===== OBSTACLES =====
+
+  private spawnObstacle(scrollSpeed: number): void {
+    const roll = Math.random();
+
+    if (roll < 0.22) {
+      this.spawnLog(scrollSpeed);
+    } else if (roll < 0.32) {
+      this.spawnBench(scrollSpeed);
+    } else if (roll < 0.50) {
+      this.spawnPterodactyl(scrollSpeed);
+    } else if (roll < 0.65) {
+      this.spawnRock(scrollSpeed);
+    } else if (roll < 0.80) {
+      this.spawnTriceratops(scrollSpeed);
+    } else if (roll < 0.90) {
+      this.spawnHunterTrap(scrollSpeed);
+    } else {
+      this.spawnSpear(scrollSpeed);
+    }
+  }
+
+  private spawnLog(scrollSpeed: number): void {
+    const obstacle = new Obstacle(this.scene, GAME_WIDTH + 40, GROUND_Y - 16, 'obstacle-log', 'log');
+    obstacle.setVelocityX(-scrollSpeed);
+    this.jumpableGroup.add(obstacle);
+  }
+
+  private spawnBench(scrollSpeed: number): void {
+    const obstacle = new Obstacle(this.scene, GAME_WIDTH + 40, GROUND_Y - 22, 'obstacle-bench', 'bench');
+    obstacle.setVelocityX(-scrollSpeed);
+    this.jumpableGroup.add(obstacle);
+  }
+
+  private spawnPterodactyl(scrollSpeed: number): void {
+    const y = Phaser.Math.Between(GROUND_Y - 170, GROUND_Y - 80);
+    const obstacle = new Obstacle(this.scene, GAME_WIDTH + 60, y, 'hazard-pterodactyl', 'pterodactyl');
+    obstacle.setVelocityX(-scrollSpeed * 1.2);
+    this.scene.tweens.add({
+      targets: obstacle,
+      y: y + 50,
+      duration: 700 + Math.random() * 400,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
+    this.obstacleGroup.add(obstacle);
+  }
+
+  private spawnRock(scrollSpeed: number): void {
+    const x = Phaser.Math.Between(Math.floor(GAME_WIDTH * 0.4), GAME_WIDTH + 20);
+    const obstacle = new Obstacle(this.scene, x, -30, 'hazard-rock', 'rock');
+    obstacle.setVelocity(-scrollSpeed * 0.2, 280);
+    this.scene.tweens.add({
+      targets: obstacle,
+      angle: 360,
+      duration: 1200,
+      repeat: -1,
+    });
+    this.obstacleGroup.add(obstacle);
+  }
+
+  private spawnTriceratops(scrollSpeed: number): void {
+    const obstacle = new Obstacle(
+      this.scene, GAME_WIDTH + 80, GROUND_Y - 24,
+      'hazard-triceratops', 'triceratops',
+    );
+    obstacle.setVelocityX(-scrollSpeed * 1.5);
+    this.obstacleGroup.add(obstacle);
+  }
+
+  private spawnHunterTrap(scrollSpeed: number): void {
+    const obstacle = new Obstacle(
+      this.scene, GAME_WIDTH + 40, GROUND_Y - 10,
+      'hazard-trap', 'trap',
+    );
+    obstacle.setVelocityX(-scrollSpeed);
+    this.obstacleGroup.add(obstacle);
+  }
+
+  private spawnSpear(scrollSpeed: number): void {
+    // Spears fly horizontally at head height
+    const y = Phaser.Math.Between(GROUND_Y - 60, GROUND_Y - 30);
+    const obstacle = new Obstacle(
+      this.scene, GAME_WIDTH + 40, y,
+      'hazard-spear', 'spear',
+    );
+    obstacle.setVelocityX(-scrollSpeed * 1.8);
+    this.obstacleGroup.add(obstacle);
+  }
+
+  // ===== PLATFORMS =====
+
+  private spawnPlatform(scrollSpeed: number): void {
+    if (Math.random() > 0.6) return; // Don't always spawn
+
+    const y = Phaser.Math.Between(PLATFORM_Y_MIN, PLATFORM_Y_MAX);
+    const platform = new Platform(this.scene, GAME_WIDTH + 80, y);
+    this.platformGroup.add(platform);
+
+    // Spawn food on top of the platform sometimes
+    if (Math.random() < 0.7) {
+      const types: FoodType[] = ['fish', 'egg'];
+      const type = types[Math.floor(Math.random() * types.length)];
+      const food = new Food(this.scene, GAME_WIDTH + 80, y - 20, type);
+      food.setVelocityX(-scrollSpeed);
+      this.foodGroup.add(food);
+    }
+  }
+
+  // ===== CLEANUP =====
+
+  private cleanup(_scrollSpeed: number): void {
+    const destroyOffscreen = (group: Phaser.Physics.Arcade.Group | Phaser.Physics.Arcade.StaticGroup) => {
+      group.getChildren().forEach((child) => {
+        const sprite = child as Phaser.GameObjects.Sprite;
+        if (sprite.x < -150 || sprite.y > GROUND_Y + 150) {
+          sprite.destroy();
+        }
+      });
+    };
+    destroyOffscreen(this.foodGroup);
+    destroyOffscreen(this.obstacleGroup);
+    destroyOffscreen(this.jumpableGroup);
+    destroyOffscreen(this.platformGroup);
+  }
+
+  private weightedPick<T>(items: T[], weights: number[]): T {
+    const total = weights.reduce((sum, w) => sum + w, 0);
+    let random = Math.random() * total;
+    for (let i = 0; i < items.length; i++) {
+      random -= weights[i];
+      if (random <= 0) return items[i];
+    }
+    return items[items.length - 1];
+  }
+}
