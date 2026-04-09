@@ -16,6 +16,7 @@ import {
   PLATFORM_SPAWN_INTERVAL,
   PLATFORM_Y_MIN,
   PLATFORM_Y_MAX,
+  OBSTACLE_SPAWN_TABLE,
 } from '../utils/constants';
 
 export class SpawnManager {
@@ -43,14 +44,14 @@ export class SpawnManager {
     this.platformGroup = platformGroup;
   }
 
-  update(time: number, scrollSpeed: number): void {
+  update(time: number, scrollSpeed: number, distance: number): void {
     if (time - this.lastFoodTime > FOOD_SPAWN_INTERVAL) {
       this.spawnFood(scrollSpeed);
       this.lastFoodTime = time;
     }
 
     if (time - this.lastObstacleTime > OBSTACLE_SPAWN_INTERVAL) {
-      this.spawnObstacle(scrollSpeed);
+      this.spawnObstacle(scrollSpeed, distance);
       this.lastObstacleTime = time;
     }
 
@@ -63,12 +64,17 @@ export class SpawnManager {
     this.foodGroup.setVelocityX(-scrollSpeed);
     this.obstacleGroup.getChildren().forEach((child) => {
       const obs = child as Obstacle;
-      if (obs.obstacleType === 'pterodactyl') {
-        obs.setVelocityX(-scrollSpeed * 1.2);
-      } else if (obs.obstacleType === 'triceratops') {
-        obs.setVelocityX(-scrollSpeed * 1.5);
-      } else if (obs.obstacleType !== 'rock') {
-        obs.setVelocityX(-scrollSpeed);
+      switch (obs.obstacleType) {
+        case 'pterodactyl': obs.setVelocityX(-scrollSpeed * 1.2); break;
+        case 'triceratops': obs.setVelocityX(-scrollSpeed * 1.5); break;
+        case 'compy': obs.setVelocityX(-scrollSpeed * 1.3); break;
+        case 'dimorphodon': obs.setVelocityX(-scrollSpeed * 1.4); break;
+        case 'stegosaurus': obs.setVelocityX(-scrollSpeed * 0.8); break;
+        case 'ankylosaurus': obs.setVelocityX(-scrollSpeed * 0.7); break;
+        case 'spear': obs.setVelocityX(-scrollSpeed * 1.8); break;
+        case 'rock': break; // rock has its own velocity
+        case 'venom': break; // venom has gravity-based arc
+        default: obs.setVelocityX(-scrollSpeed); break;
       }
     });
     this.jumpableGroup.setVelocityX(-scrollSpeed);
@@ -107,23 +113,29 @@ export class SpawnManager {
 
   // ===== OBSTACLES =====
 
-  private spawnObstacle(scrollSpeed: number): void {
-    const roll = Math.random();
+  private spawnObstacle(scrollSpeed: number, distance: number): void {
+    const available = OBSTACLE_SPAWN_TABLE.filter(e => distance >= e.unlockDistance);
+    const type = this.weightedPick(
+      available.map(e => e.type),
+      available.map(e => e.weight),
+    );
+    this.spawnByType(type, scrollSpeed);
+  }
 
-    if (roll < 0.22) {
-      this.spawnLog(scrollSpeed);
-    } else if (roll < 0.32) {
-      this.spawnBench(scrollSpeed);
-    } else if (roll < 0.50) {
-      this.spawnPterodactyl(scrollSpeed);
-    } else if (roll < 0.65) {
-      this.spawnRock(scrollSpeed);
-    } else if (roll < 0.80) {
-      this.spawnTriceratops(scrollSpeed);
-    } else if (roll < 0.90) {
-      this.spawnHunterTrap(scrollSpeed);
-    } else {
-      this.spawnSpear(scrollSpeed);
+  private spawnByType(type: string, scrollSpeed: number): void {
+    switch (type) {
+      case 'log': this.spawnLog(scrollSpeed); break;
+      case 'bench': this.spawnBench(scrollSpeed); break;
+      case 'pterodactyl': this.spawnPterodactyl(scrollSpeed); break;
+      case 'rock': this.spawnRock(scrollSpeed); break;
+      case 'triceratops': this.spawnTriceratops(scrollSpeed); break;
+      case 'trap': this.spawnHunterTrap(scrollSpeed); break;
+      case 'spear': this.spawnSpear(scrollSpeed); break;
+      case 'compy': this.spawnCompyPack(scrollSpeed); break;
+      case 'dimorphodon': this.spawnDimorphodon(scrollSpeed); break;
+      case 'stegosaurus': this.spawnStegosaurus(scrollSpeed); break;
+      case 'dilophosaurus': this.spawnDilophosaurus(scrollSpeed); break;
+      case 'ankylosaurus': this.spawnAnkylosaurus(scrollSpeed); break;
     }
   }
 
@@ -194,6 +206,26 @@ export class SpawnManager {
     );
     obstacle.setVelocityX(-scrollSpeed * 1.8);
     this.obstacleGroup.add(obstacle);
+  }
+
+  private spawnCompyPack(scrollSpeed: number): void {
+    this.spawnLog(scrollSpeed); // temporary fallback until Task 5
+  }
+
+  private spawnDimorphodon(scrollSpeed: number): void {
+    this.spawnPterodactyl(scrollSpeed);
+  }
+
+  private spawnStegosaurus(scrollSpeed: number): void {
+    this.spawnTriceratops(scrollSpeed);
+  }
+
+  private spawnDilophosaurus(scrollSpeed: number): void {
+    this.spawnHunterTrap(scrollSpeed);
+  }
+
+  private spawnAnkylosaurus(scrollSpeed: number): void {
+    this.spawnTriceratops(scrollSpeed);
   }
 
   // ===== PLATFORMS =====
