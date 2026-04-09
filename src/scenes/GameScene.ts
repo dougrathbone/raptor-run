@@ -34,6 +34,7 @@ export class GameScene extends Phaser.Scene {
   private hud!: HUD;
   private chaseManager!: ChaseManager;
   private chaseSpeedMultiplier = 1;
+  private lastChaseCheckTime = 0;
 
   private foodGroup!: Phaser.Physics.Arcade.Group;
   private obstacleGroup!: Phaser.Physics.Arcade.Group;
@@ -169,10 +170,10 @@ export class GameScene extends Phaser.Scene {
 
     this.chaseManager.update(delta);
 
-    // T-Rex chase check
-    const distance = this.scoreManager.getDistance();
-    if (!this.chaseManager.isActive) {
-      this.chaseManager.tryTrigger(distance);
+    // T-Rex chase check — only roll once per obstacle spawn interval (~1800ms)
+    if (!this.chaseManager.isActive && time - this.lastChaseCheckTime > 1800) {
+      this.lastChaseCheckTime = time;
+      this.chaseManager.tryTrigger(this.scoreManager.getDistance());
     }
 
     // Check for biome transitions based on distance traveled

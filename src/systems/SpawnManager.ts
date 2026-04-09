@@ -238,6 +238,7 @@ export class SpawnManager {
       duration: 800,
       ease: 'Sine.easeIn',
       onComplete: () => {
+        if (!obstacle.active) return;
         // Swoop back up
         this.scene.tweens.add({
           targets: obstacle,
