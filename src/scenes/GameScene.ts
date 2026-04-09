@@ -148,7 +148,7 @@ export class GameScene extends Phaser.Scene {
     this.scrollManager.setEffectiveSpeed(effectiveSpeed);
     this.scrollManager.update(delta);
 
-    this.spawnManager.update(time, effectiveSpeed);
+    this.spawnManager.update(time, effectiveSpeed, this.scoreManager.getDistance());
     this.scoreManager.updateDistance(delta, effectiveSpeed);
 
     // Check for biome transitions based on distance traveled
