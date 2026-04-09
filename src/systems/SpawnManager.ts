@@ -152,7 +152,7 @@ export class SpawnManager {
   }
 
   private spawnPterodactyl(scrollSpeed: number): void {
-    const y = Phaser.Math.Between(GROUND_Y - 170, GROUND_Y - 80);
+    const y = Phaser.Math.Between(GROUND_Y - 190, GROUND_Y - 90);
     const obstacle = new Obstacle(this.scene, GAME_WIDTH + 60, y, 'hazard-pterodactyl', 'pterodactyl');
     obstacle.setVelocityX(-scrollSpeed * 1.2);
     this.scene.tweens.add({
@@ -181,7 +181,7 @@ export class SpawnManager {
 
   private spawnTriceratops(scrollSpeed: number): void {
     const obstacle = new Obstacle(
-      this.scene, GAME_WIDTH + 80, GROUND_Y - 24,
+      this.scene, GAME_WIDTH + 80, GROUND_Y - 32,
       'hazard-triceratops', 'triceratops',
     );
     obstacle.setVelocityX(-scrollSpeed * 1.5);

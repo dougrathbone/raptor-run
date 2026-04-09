@@ -2468,116 +2468,182 @@ export class BootScene extends Phaser.Scene {
   }
 
   private makeHazardPterodactyl(): void {
-    const W = 56, H = 38;
+    const W = 80, H = 56;
     const { ctx, refresh } = this.canvas('hazard-pterodactyl', W, H);
 
-    // --- Wings ---
-    const wingGrad = ctx.createLinearGradient(0, 0, 0, 20);
-    wingGrad.addColorStop(0, '#5a4535');
-    wingGrad.addColorStop(1, '#7a6555');
+    // Shadow beneath body
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.beginPath();
+    ctx.ellipse(40, 52, 18, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
 
-    // Left wing
+    // --- Wings ---
+    const wingGrad = ctx.createLinearGradient(0, 0, 0, 28);
+    wingGrad.addColorStop(0, '#5a4535');
+    wingGrad.addColorStop(0.5, '#7a6555');
+    wingGrad.addColorStop(1, '#4a3828');
+
+    // Left wing (wider membrane)
     ctx.fillStyle = wingGrad;
     ctx.beginPath();
-    ctx.moveTo(28, 16);
-    ctx.quadraticCurveTo(20, 10, 10, 4);
-    ctx.quadraticCurveTo(4, 1, 0, 0);
-    ctx.quadraticCurveTo(0, 4, 2, 8);
-    ctx.quadraticCurveTo(10, 16, 24, 18);
+    ctx.moveTo(40, 23);
+    ctx.quadraticCurveTo(28, 14, 14, 6);
+    ctx.quadraticCurveTo(6, 1, 0, 0);
+    ctx.quadraticCurveTo(0, 6, 3, 11);
+    ctx.quadraticCurveTo(14, 22, 34, 26);
     ctx.closePath();
     ctx.fill();
 
-    // Right wing
+    // Right wing (wider membrane)
     ctx.beginPath();
-    ctx.moveTo(28, 16);
-    ctx.quadraticCurveTo(36, 10, 46, 4);
-    ctx.quadraticCurveTo(52, 1, 56, 0);
-    ctx.quadraticCurveTo(56, 4, 54, 8);
-    ctx.quadraticCurveTo(46, 16, 32, 18);
+    ctx.moveTo(40, 23);
+    ctx.quadraticCurveTo(52, 14, 66, 6);
+    ctx.quadraticCurveTo(74, 1, 80, 0);
+    ctx.quadraticCurveTo(80, 6, 77, 11);
+    ctx.quadraticCurveTo(66, 22, 46, 26);
     ctx.closePath();
     ctx.fill();
 
-    // Wing membrane texture
-    ctx.strokeStyle = 'rgba(60, 40, 25, 0.3)';
-    ctx.lineWidth = 0.5;
-    // Left wing fingers
+    // Wing membrane veins/fingers - left wing (3-4 lines)
+    ctx.strokeStyle = 'rgba(60, 40, 25, 0.35)';
+    ctx.lineWidth = 0.7;
     ctx.beginPath();
-    ctx.moveTo(26, 16); ctx.quadraticCurveTo(16, 8, 4, 2); ctx.stroke();
+    ctx.moveTo(38, 23); ctx.quadraticCurveTo(24, 11, 4, 2); ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(26, 16); ctx.quadraticCurveTo(14, 12, 6, 6); ctx.stroke();
-    // Right wing fingers
+    ctx.moveTo(38, 23); ctx.quadraticCurveTo(22, 17, 8, 9); ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(30, 16); ctx.quadraticCurveTo(40, 8, 52, 2); ctx.stroke();
+    ctx.moveTo(38, 24); ctx.quadraticCurveTo(26, 20, 12, 16); ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(30, 16); ctx.quadraticCurveTo(42, 12, 50, 6); ctx.stroke();
+    ctx.moveTo(38, 25); ctx.quadraticCurveTo(30, 23, 18, 22); ctx.stroke();
+    // Wing membrane veins/fingers - right wing
+    ctx.beginPath();
+    ctx.moveTo(42, 23); ctx.quadraticCurveTo(56, 11, 76, 2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(42, 23); ctx.quadraticCurveTo(58, 17, 72, 9); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(42, 24); ctx.quadraticCurveTo(54, 20, 68, 16); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(42, 25); ctx.quadraticCurveTo(50, 23, 62, 22); ctx.stroke();
 
-    // Body
-    const bodyGrad = ctx.createLinearGradient(28, 12, 28, 26);
+    // Body (larger torso)
+    const bodyGrad = ctx.createLinearGradient(40, 16, 40, 36);
     bodyGrad.addColorStop(0, '#4a3828');
-    bodyGrad.addColorStop(1, '#5a4838');
+    bodyGrad.addColorStop(0.5, '#5a4838');
+    bodyGrad.addColorStop(1, '#3a2818');
     ctx.fillStyle = bodyGrad;
     ctx.beginPath();
-    ctx.ellipse(28, 18, 6, 5, 0, 0, Math.PI * 2);
+    ctx.ellipse(40, 26, 10, 8, 0, 0, Math.PI * 2);
     ctx.fill();
+
+    // Textured skin - subtle scale pattern on body
+    ctx.strokeStyle = 'rgba(80, 55, 35, 0.25)';
+    ctx.lineWidth = 0.5;
+    for (let sx = 32; sx <= 48; sx += 4) {
+      ctx.beginPath();
+      ctx.arc(sx, 26, 2, 0, Math.PI);
+      ctx.stroke();
+    }
+    for (let sx = 34; sx <= 46; sx += 4) {
+      ctx.beginPath();
+      ctx.arc(sx, 30, 2, 0, Math.PI);
+      ctx.stroke();
+    }
 
     // Head
     ctx.fillStyle = '#4a3828';
     ctx.beginPath();
-    ctx.ellipse(36, 14, 5, 4, 0.2, 0, Math.PI * 2);
+    ctx.ellipse(52, 20, 8, 6, 0.2, 0, Math.PI * 2);
     ctx.fill();
 
-    // Beak
-    const beakGrad = ctx.createLinearGradient(40, 12, 48, 16);
+    // Beak (upper)
+    const beakGrad = ctx.createLinearGradient(58, 17, 72, 22);
     beakGrad.addColorStop(0, '#8a7050');
     beakGrad.addColorStop(1, '#6a5030');
     ctx.fillStyle = beakGrad;
     ctx.beginPath();
-    ctx.moveTo(40, 12);
-    ctx.lineTo(48, 14);
-    ctx.lineTo(40, 16);
+    ctx.moveTo(58, 17);
+    ctx.lineTo(72, 20);
+    ctx.lineTo(58, 22);
     ctx.closePath();
     ctx.fill();
 
-    // Crest
-    const crestGrad = ctx.createLinearGradient(32, 6, 36, 12);
-    crestGrad.addColorStop(0, '#993322');
+    // Beak (lower jaw with teeth)
+    ctx.fillStyle = '#7a6040';
+    ctx.beginPath();
+    ctx.moveTo(58, 22);
+    ctx.lineTo(70, 23);
+    ctx.lineTo(58, 25);
+    ctx.closePath();
+    ctx.fill();
+    // Visible teeth
+    ctx.fillStyle = '#e8e0c8';
+    for (let tx = 60; tx <= 68; tx += 4) {
+      ctx.beginPath();
+      ctx.moveTo(tx, 22);
+      ctx.lineTo(tx + 1.5, 24);
+      ctx.lineTo(tx + 3, 22);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Crest with gradient detail
+    const crestGrad = ctx.createLinearGradient(46, 8, 52, 18);
+    crestGrad.addColorStop(0, '#cc3322');
+    crestGrad.addColorStop(0.5, '#993322');
     crestGrad.addColorStop(1, '#663322');
     ctx.fillStyle = crestGrad;
     ctx.beginPath();
-    ctx.moveTo(32, 12);
-    ctx.quadraticCurveTo(34, 4, 38, 6);
-    ctx.lineTo(37, 11);
+    ctx.moveTo(46, 17);
+    ctx.quadraticCurveTo(48, 6, 54, 8);
+    ctx.quadraticCurveTo(56, 10, 54, 16);
     ctx.closePath();
     ctx.fill();
+    // Crest edge highlight
+    ctx.strokeStyle = 'rgba(200, 80, 60, 0.4)';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(46, 17);
+    ctx.quadraticCurveTo(48, 6, 54, 8);
+    ctx.stroke();
 
     // Eye (menacing red)
     ctx.fillStyle = '#ff2200';
     ctx.beginPath();
-    ctx.arc(37, 13, 2, 0, Math.PI * 2);
+    ctx.arc(53, 19, 2.5, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = '#111';
     ctx.beginPath();
-    ctx.arc(37.5, 13, 1, 0, Math.PI * 2);
+    ctx.arc(53.5, 19, 1.3, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
     ctx.beginPath();
-    ctx.arc(36.5, 12.5, 0.5, 0, Math.PI * 2);
+    ctx.arc(52.5, 18.2, 0.7, 0, Math.PI * 2);
     ctx.fill();
 
-    // Feet
+    // Feet/claws
     ctx.fillStyle = '#4a3828';
     ctx.beginPath();
-    ctx.moveTo(26, 22); ctx.lineTo(24, 32); ctx.lineTo(22, 32);
-    ctx.lineTo(20, 36); ctx.lineTo(24, 34); ctx.lineTo(28, 36);
-    ctx.lineTo(26, 32); ctx.lineTo(28, 24);
+    ctx.moveTo(37, 32); ctx.lineTo(34, 44); ctx.lineTo(32, 44);
+    ctx.lineTo(29, 50); ctx.lineTo(34, 48); ctx.lineTo(39, 50);
+    ctx.lineTo(37, 44); ctx.lineTo(40, 34);
     ctx.closePath();
     ctx.fill();
     ctx.beginPath();
-    ctx.moveTo(30, 22); ctx.lineTo(32, 32); ctx.lineTo(30, 32);
-    ctx.lineTo(28, 36); ctx.lineTo(32, 34); ctx.lineTo(36, 36);
-    ctx.lineTo(34, 32); ctx.lineTo(32, 24);
+    ctx.moveTo(43, 32); ctx.lineTo(46, 44); ctx.lineTo(44, 44);
+    ctx.lineTo(41, 50); ctx.lineTo(46, 48); ctx.lineTo(51, 50);
+    ctx.lineTo(49, 44); ctx.lineTo(46, 34);
     ctx.closePath();
     ctx.fill();
+    // Claw tips
+    ctx.fillStyle = '#2a1808';
+    ctx.beginPath();
+    ctx.moveTo(29, 50); ctx.lineTo(27, 53); ctx.lineTo(34, 48); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(39, 50); ctx.lineTo(40, 53); ctx.lineTo(34, 48); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(41, 50); ctx.lineTo(39, 53); ctx.lineTo(46, 48); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(51, 50); ctx.lineTo(53, 53); ctx.lineTo(46, 48); ctx.fill();
 
     refresh();
   }
@@ -2659,80 +2725,187 @@ export class BootScene extends Phaser.Scene {
   //  UI
   // ================================================================
   private makeHazardTriceratops(): void {
-    const W = 64, H = 48;
+    const W = 90, H = 64;
     const { ctx, refresh } = this.canvas('hazard-triceratops', W, H);
 
-    // Body (large, bulky)
-    const bodyGrad = ctx.createLinearGradient(10, 10, 10, 42);
-    bodyGrad.addColorStop(0, '#7a6a50');
+    // Shadow beneath
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.beginPath();
+    ctx.ellipse(45, 61, 30, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Body (bulkier proportions)
+    const bodyGrad = ctx.createLinearGradient(14, 12, 14, 56);
+    bodyGrad.addColorStop(0, '#8a7a58');
+    bodyGrad.addColorStop(0.4, '#7a6a4a');
     bodyGrad.addColorStop(1, '#5a4a38');
     ctx.fillStyle = bodyGrad;
     ctx.beginPath();
-    ctx.moveTo(8, 20);
-    ctx.quadraticCurveTo(12, 10, 24, 8);
-    ctx.quadraticCurveTo(40, 6, 50, 12);
-    ctx.quadraticCurveTo(56, 16, 56, 24);
-    ctx.quadraticCurveTo(56, 36, 48, 40);
-    ctx.quadraticCurveTo(36, 44, 20, 42);
-    ctx.quadraticCurveTo(10, 40, 8, 32);
+    ctx.moveTo(10, 28);
+    ctx.quadraticCurveTo(16, 13, 33, 10);
+    ctx.quadraticCurveTo(55, 7, 70, 16);
+    ctx.quadraticCurveTo(78, 22, 78, 33);
+    ctx.quadraticCurveTo(78, 50, 68, 55);
+    ctx.quadraticCurveTo(50, 60, 26, 57);
+    ctx.quadraticCurveTo(12, 54, 10, 44);
     ctx.closePath();
     ctx.fill();
 
-    // Frill (shield behind head)
-    ctx.fillStyle = '#8a7a60';
+    // Shoulder muscle shading
+    const shoulderGrad = ctx.createRadialGradient(30, 28, 2, 30, 28, 16);
+    shoulderGrad.addColorStop(0, 'rgba(160,140,100,0.3)');
+    shoulderGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = shoulderGrad;
     ctx.beginPath();
-    ctx.moveTo(44, 6);
-    ctx.quadraticCurveTo(52, 0, 60, 4);
-    ctx.quadraticCurveTo(64, 12, 60, 20);
-    ctx.quadraticCurveTo(56, 16, 50, 12);
+    ctx.ellipse(30, 32, 14, 18, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Textured hide - bumpy pattern
+    ctx.fillStyle = 'rgba(100, 80, 50, 0.15)';
+    for (let bx = 20; bx <= 70; bx += 8) {
+      for (let by = 18; by <= 50; by += 7) {
+        ctx.beginPath();
+        ctx.arc(bx + (by % 8), by, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Frill (shield behind head) with scalloped edge
+    const frillGrad = ctx.createLinearGradient(58, 0, 90, 28);
+    frillGrad.addColorStop(0, '#9a8a6a');
+    frillGrad.addColorStop(0.5, '#8a7a58');
+    frillGrad.addColorStop(1, '#7a6a4a');
+    ctx.fillStyle = frillGrad;
+    ctx.beginPath();
+    ctx.moveTo(60, 8);
+    ctx.quadraticCurveTo(72, 0, 82, 4);
+    ctx.quadraticCurveTo(90, 14, 86, 26);
+    ctx.quadraticCurveTo(80, 22, 72, 18);
+    ctx.quadraticCurveTo(68, 16, 62, 14);
     ctx.closePath();
     ctx.fill();
-    // Frill spots
-    ctx.fillStyle = 'rgba(100, 60, 30, 0.3)';
+    // Scalloped frill edge
+    ctx.strokeStyle = 'rgba(140, 100, 60, 0.5)';
+    ctx.lineWidth = 1;
+    for (let fi = 0; fi < 3; fi++) {
+      const fx = 62 + fi * 9;
+      const fy = 4 + fi * 6;
+      ctx.beginPath();
+      ctx.arc(fx, fy, 3, 0, Math.PI);
+      ctx.stroke();
+    }
+    // Frill decorative eye spots
+    ctx.fillStyle = 'rgba(120, 60, 30, 0.4)';
     ctx.beginPath();
-    ctx.arc(54, 10, 3, 0, Math.PI * 2);
+    ctx.arc(76, 12, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(180, 100, 50, 0.3)';
+    ctx.beginPath();
+    ctx.arc(76, 12, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(120, 60, 30, 0.4)';
+    ctx.beginPath();
+    ctx.arc(68, 6, 2.5, 0, Math.PI * 2);
     ctx.fill();
 
     // Head
     ctx.fillStyle = '#6a5a44';
     ctx.beginPath();
-    ctx.ellipse(10, 24, 10, 8, 0, 0, Math.PI * 2);
+    ctx.ellipse(14, 33, 14, 11, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Head shading
+    const headShade = ctx.createLinearGradient(4, 26, 28, 44);
+    headShade.addColorStop(0, 'rgba(120,100,70,0.2)');
+    headShade.addColorStop(1, 'rgba(0,0,0,0.2)');
+    ctx.fillStyle = headShade;
+    ctx.beginPath();
+    ctx.ellipse(14, 33, 14, 11, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Horns (3 — two brow, one nose)
+    // Three properly positioned horns
     ctx.fillStyle = '#c8b890';
+    // Left brow horn (long)
     ctx.beginPath();
-    ctx.moveTo(4, 20); ctx.lineTo(0, 12); ctx.lineTo(6, 18); ctx.fill();
+    ctx.moveTo(6, 28); ctx.lineTo(0, 16); ctx.lineTo(8, 25); ctx.closePath(); ctx.fill();
+    // Right brow horn (long)
     ctx.beginPath();
-    ctx.moveTo(8, 18); ctx.lineTo(4, 8); ctx.lineTo(10, 16); ctx.fill();
+    ctx.moveTo(10, 25); ctx.lineTo(6, 11); ctx.lineTo(13, 22); ctx.closePath(); ctx.fill();
+    // Nose horn (shorter)
     ctx.beginPath();
-    ctx.moveTo(2, 24); ctx.lineTo(-2, 22); ctx.lineTo(2, 26); ctx.fill();
+    ctx.moveTo(3, 33); ctx.lineTo(-2, 29); ctx.lineTo(3, 37); ctx.closePath(); ctx.fill();
+    // Horn shading
+    ctx.fillStyle = 'rgba(100, 80, 50, 0.3)';
+    ctx.beginPath();
+    ctx.moveTo(7, 27); ctx.lineTo(3, 19); ctx.lineTo(8, 25); ctx.closePath(); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(11, 24); ctx.lineTo(8, 14); ctx.lineTo(13, 22); ctx.closePath(); ctx.fill();
 
-    // Eye
+    // Brow ridge above eye
+    ctx.fillStyle = '#5a4a36';
+    ctx.beginPath();
+    ctx.ellipse(12, 28, 5, 2, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Eye with brow detail
     ctx.fillStyle = '#aa3300';
     ctx.beginPath();
-    ctx.arc(8, 22, 2.5, 0, Math.PI * 2);
+    ctx.arc(11, 30, 3.5, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = '#111';
     ctx.beginPath();
-    ctx.arc(7.5, 22, 1.2, 0, Math.PI * 2);
+    ctx.arc(10.5, 30, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.beginPath();
+    ctx.arc(9.5, 29, 1, 0, Math.PI * 2);
     ctx.fill();
 
-    // Legs
-    ctx.fillStyle = '#5a4a38';
-    ctx.fillRect(20, 40, 6, 8);
-    ctx.fillRect(38, 40, 6, 8);
+    // Legs with gradient musculature
+    const legGrad = ctx.createLinearGradient(0, 52, 12, 62);
+    legGrad.addColorStop(0, '#6a5a44');
+    legGrad.addColorStop(1, '#4a3a28');
+    ctx.fillStyle = legGrad;
+    ctx.beginPath();
+    ctx.roundRect(26, 52, 10, 12, 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.roundRect(50, 52, 10, 12, 2);
+    ctx.fill();
+    // Leg highlight (musculature)
+    ctx.fillStyle = 'rgba(160, 130, 90, 0.25)';
+    ctx.beginPath();
+    ctx.ellipse(29, 55, 3, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(53, 55, 3, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
     // Feet
     ctx.fillStyle = '#4a3a28';
-    ctx.fillRect(18, 46, 10, 3);
-    ctx.fillRect(36, 46, 10, 3);
+    ctx.fillRect(22, 62, 16, 4);
+    ctx.fillRect(46, 62, 16, 4);
+    // Toes
+    ctx.fillStyle = '#3a2a18';
+    ctx.fillRect(21, 65, 5, 2);
+    ctx.fillRect(27, 65, 5, 2);
+    ctx.fillRect(33, 65, 5, 2);
+    ctx.fillRect(45, 65, 5, 2);
+    ctx.fillRect(51, 65, 5, 2);
+    ctx.fillRect(57, 65, 5, 2);
 
-    // Tail
+    // Short thick tail
     ctx.fillStyle = '#6a5a44';
     ctx.beginPath();
-    ctx.moveTo(54, 28);
-    ctx.quadraticCurveTo(60, 30, 62, 34);
-    ctx.quadraticCurveTo(60, 32, 54, 32);
+    ctx.moveTo(72, 36);
+    ctx.quadraticCurveTo(82, 40, 86, 48);
+    ctx.quadraticCurveTo(82, 44, 72, 42);
+    ctx.closePath();
+    ctx.fill();
+    // Tail shading
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.beginPath();
+    ctx.moveTo(73, 39);
+    ctx.quadraticCurveTo(80, 42, 84, 48);
+    ctx.quadraticCurveTo(80, 44, 73, 42);
     ctx.closePath();
     ctx.fill();
 
