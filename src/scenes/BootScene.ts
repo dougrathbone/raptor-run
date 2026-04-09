@@ -83,6 +83,7 @@ export class BootScene extends Phaser.Scene {
     this.makeObstacleLog();
     this.makeObstacleBench();
     this.makeHazardCompy();
+    this.makeHazardDimorphodon();
     this.makeHazardPterodactyl();
     this.makeHazardRock();
     this.makeHazardTriceratops();
@@ -2464,6 +2465,185 @@ export class BootScene extends Phaser.Scene {
     // Back rest highlight
     ctx.fillStyle = 'rgba(180, 140, 90, 0.25)';
     ctx.fillRect(6, 2, w - 12, 3);
+
+    refresh();
+  }
+
+  private makeHazardDimorphodon(): void {
+    const W = 52, H = 44;
+    const { ctx, refresh } = this.canvas('hazard-dimorphodon', W, H);
+
+    // Shadow beneath body
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.beginPath();
+    ctx.ellipse(24, 42, 12, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // --- Short bat-like wings ---
+    const wingGrad = ctx.createLinearGradient(0, 10, 0, 28);
+    wingGrad.addColorStop(0, '#8a6a4a');
+    wingGrad.addColorStop(0.5, '#7a5a3a');
+    wingGrad.addColorStop(1, '#6a4a2a');
+
+    // Left wing (short, bat-shaped)
+    ctx.fillStyle = wingGrad;
+    ctx.beginPath();
+    ctx.moveTo(22, 24);
+    ctx.quadraticCurveTo(14, 16, 4, 10);
+    ctx.quadraticCurveTo(0, 8, 2, 13);
+    ctx.quadraticCurveTo(10, 22, 20, 28);
+    ctx.closePath();
+    ctx.fill();
+
+    // Right wing (short, bat-shaped)
+    ctx.beginPath();
+    ctx.moveTo(26, 24);
+    ctx.quadraticCurveTo(34, 16, 44, 10);
+    ctx.quadraticCurveTo(48, 8, 46, 13);
+    ctx.quadraticCurveTo(38, 22, 28, 28);
+    ctx.closePath();
+    ctx.fill();
+
+    // Wing membrane veins - left
+    ctx.strokeStyle = 'rgba(50, 30, 15, 0.35)';
+    ctx.lineWidth = 0.7;
+    ctx.beginPath();
+    ctx.moveTo(22, 24); ctx.quadraticCurveTo(12, 14, 4, 10); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(21, 25); ctx.quadraticCurveTo(13, 19, 6, 16); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(21, 27); ctx.quadraticCurveTo(15, 24, 10, 22); ctx.stroke();
+    // Wing membrane veins - right
+    ctx.beginPath();
+    ctx.moveTo(26, 24); ctx.quadraticCurveTo(36, 14, 44, 10); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(27, 25); ctx.quadraticCurveTo(35, 19, 42, 16); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(27, 27); ctx.quadraticCurveTo(33, 24, 38, 22); ctx.stroke();
+
+    // Compact body
+    const bodyGrad = ctx.createLinearGradient(24, 18, 24, 34);
+    bodyGrad.addColorStop(0, '#5a2a1a');
+    bodyGrad.addColorStop(0.5, '#6a3a2a');
+    bodyGrad.addColorStop(1, '#4a1a0a');
+    ctx.fillStyle = bodyGrad;
+    ctx.beginPath();
+    ctx.ellipse(24, 27, 8, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Short stubby tail
+    ctx.fillStyle = '#5a2a1a';
+    ctx.beginPath();
+    ctx.moveTo(16, 27);
+    ctx.quadraticCurveTo(10, 28, 7, 30);
+    ctx.lineTo(8, 32);
+    ctx.quadraticCurveTo(11, 31, 17, 30);
+    ctx.closePath();
+    ctx.fill();
+
+    // Skin texture on body
+    ctx.strokeStyle = 'rgba(80, 40, 20, 0.25)';
+    ctx.lineWidth = 0.5;
+    for (let sx = 18; sx <= 30; sx += 4) {
+      ctx.beginPath();
+      ctx.arc(sx, 27, 2, 0, Math.PI);
+      ctx.stroke();
+    }
+
+    // LARGE head (~40% of body length) - the defining trait
+    const headGrad = ctx.createLinearGradient(28, 12, 28, 28);
+    headGrad.addColorStop(0, '#6a3a2a');
+    headGrad.addColorStop(0.5, '#5a2a1a');
+    headGrad.addColorStop(1, '#4a1a0a');
+    ctx.fillStyle = headGrad;
+    ctx.beginPath();
+    ctx.ellipse(36, 20, 11, 9, 0.1, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Small crest on head
+    ctx.fillStyle = '#7a3a2a';
+    ctx.beginPath();
+    ctx.moveTo(30, 13);
+    ctx.quadraticCurveTo(33, 7, 37, 9);
+    ctx.quadraticCurveTo(39, 11, 37, 14);
+    ctx.closePath();
+    ctx.fill();
+    // Crest highlight
+    ctx.strokeStyle = 'rgba(140, 70, 40, 0.5)';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(30, 13);
+    ctx.quadraticCurveTo(33, 7, 37, 9);
+    ctx.stroke();
+
+    // Open jaw — upper jaw
+    ctx.fillStyle = '#5a2a1a';
+    ctx.beginPath();
+    ctx.moveTo(43, 18);
+    ctx.lineTo(51, 20);
+    ctx.lineTo(43, 23);
+    ctx.closePath();
+    ctx.fill();
+
+    // Lower jaw (open, angled down)
+    ctx.fillStyle = '#4a1a0a';
+    ctx.beginPath();
+    ctx.moveTo(43, 23);
+    ctx.lineTo(50, 26);
+    ctx.lineTo(43, 27);
+    ctx.closePath();
+    ctx.fill();
+
+    // Prominent teeth (visible in open jaw)
+    ctx.fillStyle = '#e8e0c0';
+    for (let tx = 44; tx <= 50; tx += 3) {
+      // Upper teeth pointing down
+      ctx.beginPath();
+      ctx.moveTo(tx, 23);
+      ctx.lineTo(tx + 1, 25.5);
+      ctx.lineTo(tx + 2, 23);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // Lower teeth pointing up
+    ctx.fillStyle = '#d8d0b0';
+    for (let tx = 45; tx <= 49; tx += 4) {
+      ctx.beginPath();
+      ctx.moveTo(tx, 26);
+      ctx.lineTo(tx + 1, 23.5);
+      ctx.lineTo(tx + 2, 26);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Bright amber eye
+    ctx.fillStyle = '#ffaa22';
+    ctx.beginPath();
+    ctx.arc(38, 18, 2.8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#111';
+    ctx.beginPath();
+    ctx.arc(38.5, 18, 1.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.beginPath();
+    ctx.arc(37.5, 17.2, 0.7, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Feet/claws (short legs)
+    ctx.fillStyle = '#4a2010';
+    ctx.beginPath();
+    ctx.moveTo(21, 32); ctx.lineTo(19, 40); ctx.lineTo(17, 40);
+    ctx.lineTo(15, 44); ctx.lineTo(19, 42); ctx.lineTo(22, 44);
+    ctx.lineTo(22, 40); ctx.lineTo(24, 33);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(27, 32); ctx.lineTo(29, 40); ctx.lineTo(27, 40);
+    ctx.lineTo(25, 44); ctx.lineTo(29, 42); ctx.lineTo(32, 44);
+    ctx.lineTo(31, 40); ctx.lineTo(29, 33);
+    ctx.closePath();
+    ctx.fill();
 
     refresh();
   }
