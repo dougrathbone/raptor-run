@@ -29,6 +29,12 @@ export class BootScene extends Phaser.Scene {
 
     // Triceratops (CC0 by ARoachIFoundOnMyPillow from OpenGameArt)
     this.load.image('triceratops-sprite', 'assets/sprites/triceratops.png');
+
+    // Stegosaurus (CC0 from OpenGameArt 2D Dinosaur Set)
+    this.load.image('stegosaurus-sprite', 'assets/sprites/stegosaurus.png');
+
+    // Dilophosaurus
+    this.load.image('dilophosaurus-sprite', 'assets/sprites/dilophosaurus.png');
   }
 
   create(): void {

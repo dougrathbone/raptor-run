@@ -207,6 +207,7 @@ export class SpawnManager {
       this.scene, GAME_WIDTH + 40, y,
       'hazard-spear', 'spear',
     );
+    obstacle.setFlipX(true);
     obstacle.setVelocityX(-scrollSpeed * 1.8);
     this.obstacleGroup.add(obstacle);
   }
@@ -256,21 +257,23 @@ export class SpawnManager {
   }
 
   private spawnStegosaurus(scrollSpeed: number): void {
+    const texture = this.scene.textures.exists('stegosaurus-sprite')
+      ? 'stegosaurus-sprite' : 'hazard-stegosaurus';
     const obstacle = new Obstacle(
       this.scene, GAME_WIDTH + 60, GROUND_Y - 36,
-      'hazard-stegosaurus', 'stegosaurus',
+      texture, 'stegosaurus',
     );
-    obstacle.setFlipX(true);
     obstacle.setVelocityX(-scrollSpeed * 0.8);
     this.obstacleGroup.add(obstacle);
   }
 
   private spawnDilophosaurus(scrollSpeed: number): void {
+    const texture = this.scene.textures.exists('dilophosaurus-sprite')
+      ? 'dilophosaurus-sprite' : 'hazard-dilophosaurus';
     const obstacle = new Obstacle(
       this.scene, GAME_WIDTH + 40, GROUND_Y - 35,
-      'hazard-dilophosaurus', 'dilophosaurus',
+      texture, 'dilophosaurus',
     );
-    obstacle.setFlipX(true);
     obstacle.setVelocityX(-scrollSpeed);
     this.obstacleGroup.add(obstacle);
 
@@ -300,7 +303,6 @@ export class SpawnManager {
       this.scene, GAME_WIDTH + 60, GROUND_Y - 26,
       'hazard-ankylosaurus', 'ankylosaurus',
     );
-    obstacle.setFlipX(true);
     obstacle.setVelocityX(-scrollSpeed * 0.7);
     this.obstacleGroup.add(obstacle);
   }
