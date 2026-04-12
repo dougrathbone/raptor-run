@@ -103,7 +103,7 @@ export class GameScene extends Phaser.Scene {
 
     // HUD
     this.hud = new HUD(this);
-    this.hud.createHearts(this.raptor.maxHp);
+    this.hud.createHearts(Math.floor(this.raptor.maxHp / 4));
 
     // Collisions
     this.physics.add.overlap(

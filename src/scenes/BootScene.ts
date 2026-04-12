@@ -1151,84 +1151,187 @@ export class BootScene extends Phaser.Scene {
     const w = 128, h = 76;
     const { ctx, refresh } = this.canvas('ground-jungle', w, h);
 
-    // Deep earth gradient
-    const dirtGrad = ctx.createLinearGradient(0, 10, 0, h);
-    dirtGrad.addColorStop(0, '#6b4423');
-    dirtGrad.addColorStop(0.3, '#7a5232');
-    dirtGrad.addColorStop(0.7, '#6a4020');
-    dirtGrad.addColorStop(1, '#5a3518');
+    // Dark, rich jungle floor — humus and wet earth
+    const dirtGrad = ctx.createLinearGradient(0, 8, 0, h);
+    dirtGrad.addColorStop(0, '#3a2a12');
+    dirtGrad.addColorStop(0.1, '#4a3418');
+    dirtGrad.addColorStop(0.3, '#55381a');
+    dirtGrad.addColorStop(0.6, '#4a3015');
+    dirtGrad.addColorStop(0.85, '#3a2510');
+    dirtGrad.addColorStop(1, '#2a1a0a');
     ctx.fillStyle = dirtGrad;
     ctx.fillRect(0, 0, w, h);
 
-    // Dirt texture (scattered marks)
-    ctx.fillStyle = 'rgba(90, 60, 30, 0.3)';
-    for (let i = 0; i < 20; i++) {
-      const dx = (i * 37 + 13) % w;
-      const dy = 16 + (i * 23 + 7) % (h - 20);
-      const dr = 1 + (i % 3);
-      ctx.beginPath();
-      ctx.arc(dx, dy, dr, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Root / crack lines
-    ctx.strokeStyle = 'rgba(50, 30, 15, 0.25)';
-    ctx.lineWidth = 0.8;
-    for (let i = 0; i < 6; i++) {
-      const rx = (i * 43 + 5) % w;
-      const ry = 18 + (i * 31) % (h - 24);
-      ctx.beginPath();
-      ctx.moveTo(rx, ry);
-      ctx.quadraticCurveTo(rx + 8, ry + 3, rx + 18, ry - 1);
-      ctx.stroke();
-    }
-
-    // Pebbles with highlights
-    const pebbles = [
-      { x: 15, y: 30, r: 3.5 }, { x: 55, y: 45, r: 2.5 },
-      { x: 90, y: 35, r: 3 }, { x: 35, y: 60, r: 4 },
-      { x: 110, y: 55, r: 2.5 }, { x: 75, y: 65, r: 3 },
+    // Damp patches — darker wet spots in the soil
+    ctx.fillStyle = 'rgba(20, 12, 5, 0.25)';
+    const wetSpots = [
+      { x: 20, y: 32, rx: 10, ry: 5 }, { x: 65, y: 50, rx: 12, ry: 4 },
+      { x: 105, y: 38, rx: 8, ry: 5 }, { x: 42, y: 62, rx: 14, ry: 4 },
     ];
-    for (const p of pebbles) {
-      ctx.fillStyle = '#8a7a68';
+    for (const ws of wetSpots) {
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = 'rgba(160, 140, 120, 0.4)';
-      ctx.beginPath();
-      ctx.arc(p.x - p.r * 0.3, p.y - p.r * 0.3, p.r * 0.5, 0, Math.PI * 2);
+      ctx.ellipse(ws.x, ws.y, ws.rx, ws.ry, 0, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    // Grass layer — gradient base
-    const grassGrad = ctx.createLinearGradient(0, 0, 0, 14);
-    grassGrad.addColorStop(0, '#4a8f3f');
-    grassGrad.addColorStop(1, '#3d7030');
-    ctx.fillStyle = grassGrad;
-    ctx.fillRect(0, 0, w, 12);
-
-    // Individual grass blades (varying heights)
-    for (let x = 0; x < w; x += 2) {
-      const bladeH = 6 + Math.sin(x * 0.7) * 4 + Math.sin(x * 1.3) * 2;
-      const lean = Math.sin(x * 0.4) * 2;
-
-      // Dark blade
-      ctx.strokeStyle = `rgba(${40 + (x % 20)}, ${100 + (x % 30)}, ${30 + (x % 15)}, 0.7)`;
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(x, 12);
-      ctx.quadraticCurveTo(x + lean * 0.5, 12 - bladeH * 0.6, x + lean, 12 - bladeH);
-      ctx.stroke();
-
-      // Occasional bright blade
-      if (x % 6 === 0) {
-        ctx.strokeStyle = 'rgba(90, 160, 60, 0.5)';
-        ctx.lineWidth = 0.8;
+    // Organic debris — decomposing matter, tiny particles
+    for (let i = 0; i < 40; i++) {
+      const dx = (i * 29 + 7) % w;
+      const dy = 14 + (i * 17 + 3) % (h - 18);
+      const shade = 40 + (i * 11) % 35;
+      const isLeafy = i % 5 === 0;
+      if (isLeafy) {
+        ctx.fillStyle = `rgba(${shade + 20}, ${shade + 10}, ${shade - 15}, 0.3)`;
         ctx.beginPath();
-        ctx.moveTo(x + 1, 12);
-        ctx.quadraticCurveTo(x + 1 + lean * 0.3, 12 - bladeH * 0.4, x + 1 + lean * 0.6, 12 - bladeH * 0.7);
-        ctx.stroke();
+        ctx.ellipse(dx, dy, 2 + (i % 3), 1, i * 1.1, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = `rgba(${shade}, ${shade * 0.6}, ${shade * 0.3}, 0.3)`;
+        ctx.beginPath();
+        ctx.arc(dx, dy, 0.6 + (i % 3) * 0.4, 0, Math.PI * 2);
+        ctx.fill();
       }
+    }
+
+    // Exposed surface roots — thick, winding, partially buried
+    ctx.lineCap = 'round';
+    const roots = [
+      { x: 5, y: 18, segs: [[12, 20], [22, 16], [34, 19], [42, 15]] },
+      { x: 55, y: 22, segs: [[62, 19], [70, 23], [80, 18]] },
+      { x: 88, y: 16, segs: [[96, 20], [108, 15], [118, 18], [126, 14]] },
+      { x: 30, y: 40, segs: [[38, 38], [48, 42], [55, 37]] },
+      { x: 72, y: 45, segs: [[82, 42], [90, 47], [100, 43]] },
+    ];
+    for (const root of roots) {
+      // Root shadow
+      ctx.strokeStyle = 'rgba(15, 8, 2, 0.3)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(root.x, root.y + 1);
+      for (const [sx, sy] of root.segs) ctx.lineTo(sx, sy + 1);
+      ctx.stroke();
+      // Root body
+      const rg = ctx.createLinearGradient(root.x, root.y - 2, root.x, root.y + 3);
+      rg.addColorStop(0, '#5a4020');
+      rg.addColorStop(0.5, '#4a3218');
+      rg.addColorStop(1, '#3a2410');
+      ctx.strokeStyle = rg;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(root.x, root.y);
+      for (const [sx, sy] of root.segs) ctx.lineTo(sx, sy);
+      ctx.stroke();
+      // Root highlight
+      ctx.strokeStyle = 'rgba(90, 70, 40, 0.2)';
+      ctx.lineWidth = 0.7;
+      ctx.beginPath();
+      ctx.moveTo(root.x, root.y - 1);
+      for (const [sx, sy] of root.segs) ctx.lineTo(sx, sy - 1);
+      ctx.stroke();
+    }
+
+    // Fallen leaves — various tropical shapes and decay stages
+    const leaves = [
+      { x: 8, y: 26, r: 0.3, c: '#6a5020', s: 3.5 },
+      { x: 28, y: 48, r: 1.2, c: '#7a6028', s: 4 },
+      { x: 50, y: 22, r: 2.0, c: '#5a4a18', s: 3 },
+      { x: 70, y: 55, r: 0.7, c: '#8a6830', s: 4.5 },
+      { x: 95, y: 30, r: 1.8, c: '#6a5520', s: 3.5 },
+      { x: 112, y: 45, r: 0.5, c: '#7a5a22', s: 3 },
+      { x: 38, y: 34, r: 2.5, c: '#4a3a12', s: 3.5 },
+      { x: 82, y: 42, r: 1.0, c: '#6a5828', s: 4 },
+      { x: 18, y: 58, r: 1.5, c: '#5a4818', s: 3 },
+      { x: 120, y: 28, r: 0.8, c: '#7a6830', s: 3.5 },
+    ];
+    for (const l of leaves) {
+      ctx.save();
+      ctx.translate(l.x, l.y);
+      ctx.rotate(l.r);
+      ctx.fillStyle = l.c;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, l.s, l.s * 0.45, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Leaf vein
+      ctx.strokeStyle = 'rgba(40, 30, 10, 0.3)';
+      ctx.lineWidth = 0.4;
+      ctx.beginPath();
+      ctx.moveTo(-l.s, 0);
+      ctx.lineTo(l.s, 0);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // Moss and lichen patches on ground surface
+    const mossPatchData = [
+      { x: 10, y: 14, rx: 8, ry: 3 }, { x: 35, y: 12, rx: 10, ry: 3 },
+      { x: 62, y: 13, rx: 7, ry: 2.5 }, { x: 88, y: 11, rx: 9, ry: 3 },
+      { x: 115, y: 14, rx: 8, ry: 2.5 },
+    ];
+    for (const m of mossPatchData) {
+      const mg = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.rx);
+      mg.addColorStop(0, 'rgba(40, 80, 25, 0.35)');
+      mg.addColorStop(0.6, 'rgba(35, 70, 20, 0.25)');
+      mg.addColorStop(1, 'rgba(30, 60, 15, 0)');
+      ctx.fillStyle = mg;
+      ctx.beginPath();
+      ctx.ellipse(m.x, m.y, m.rx, m.ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Dense undergrowth — low ferns and broad-leaf plants at surface
+    const surfGrad = ctx.createLinearGradient(0, 0, 0, 16);
+    surfGrad.addColorStop(0, '#2a5518');
+    surfGrad.addColorStop(0.5, '#356820');
+    surfGrad.addColorStop(1, '#2a4a14');
+    ctx.fillStyle = surfGrad;
+    ctx.fillRect(0, 0, w, 10);
+
+    // Tropical ground ferns — broad arching fronds
+    ctx.lineCap = 'round';
+    for (let x = 0; x < w; x += 4) {
+      const fh = 5 + Math.sin(x * 0.5) * 3 + Math.sin(x * 1.1) * 2;
+      const lean = Math.sin(x * 0.3) * 3;
+      const gv = 65 + (x * 11) % 50;
+      // Frond stem
+      ctx.strokeStyle = `rgba(30, ${gv}, 18, 0.6)`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, 10);
+      ctx.quadraticCurveTo(x + lean * 0.5, 10 - fh * 0.6, x + lean, 10 - fh);
+      ctx.stroke();
+      // Leaflets along frond
+      if (x % 8 === 0) {
+        ctx.fillStyle = `rgba(35, ${gv + 10}, 20, 0.4)`;
+        for (let lp = 0.3; lp < 0.9; lp += 0.2) {
+          const lx = x + lean * lp;
+          const ly = 10 - fh * lp;
+          ctx.beginPath();
+          ctx.ellipse(lx - 1.5, ly, 2, 0.8, -0.4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.ellipse(lx + 1.5, ly, 2, 0.8, 0.4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    // Small mushrooms growing in damp spots
+    const mushrooms = [
+      { x: 22, y: 15 }, { x: 58, y: 13 }, { x: 98, y: 14 },
+    ];
+    for (const mu of mushrooms) {
+      // Stem
+      ctx.fillStyle = '#c8b890';
+      ctx.fillRect(mu.x - 0.5, mu.y - 3, 1.5, 3);
+      // Cap
+      ctx.fillStyle = '#a05030';
+      ctx.beginPath();
+      ctx.ellipse(mu.x + 0.2, mu.y - 3, 2.5, 1.5, 0, Math.PI, 0);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.beginPath();
+      ctx.arc(mu.x - 0.5, mu.y - 3.8, 0.5, 0, Math.PI * 2);
+      ctx.fill();
     }
 
     refresh();
@@ -1244,45 +1347,128 @@ export class BootScene extends Phaser.Scene {
     const w = 512, h = 200;
     const { ctx, refresh } = this.canvas('hills-far-jungle', w, h);
 
-    // Distant ridge — dark blue-green
-    const ridge1 = ctx.createLinearGradient(0, 50, 0, h);
-    ridge1.addColorStop(0, '#3a6a5a');
-    ridge1.addColorStop(1, '#4a7a66');
+    // Humid tropical sky wash
+    const skyWash = ctx.createLinearGradient(0, 0, 0, h);
+    skyWash.addColorStop(0, 'rgba(110, 180, 200, 0.06)');
+    skyWash.addColorStop(0.5, 'rgba(130, 195, 190, 0.04)');
+    skyWash.addColorStop(1, 'rgba(140, 200, 180, 0)');
+    ctx.fillStyle = skyWash;
+    ctx.fillRect(0, 0, w, h);
+
+    // Furthest ridge — blue-green mountains lost in haze
+    const ridge0 = ctx.createLinearGradient(0, 30, 0, h);
+    ridge0.addColorStop(0, '#6a9a88');
+    ridge0.addColorStop(0.4, '#5a8a78');
+    ridge0.addColorStop(1, '#6a9a86');
+    ctx.fillStyle = ridge0;
+    ctx.beginPath();
+    ctx.moveTo(0, h); ctx.lineTo(0, 95);
+    ctx.bezierCurveTo(25, 60, 60, 75, 100, 50);
+    ctx.bezierCurveTo(140, 30, 180, 55, 220, 44);
+    ctx.bezierCurveTo(260, 34, 300, 58, 340, 40);
+    ctx.bezierCurveTo(380, 25, 420, 50, 460, 38);
+    ctx.bezierCurveTo(490, 30, 510, 44, 512, 50);
+    ctx.lineTo(512, h); ctx.closePath(); ctx.fill();
+
+    // Steam/mist rising from distant canopy
+    for (const mx of [80, 200, 330, 460]) {
+      const mg = ctx.createRadialGradient(mx, 60, 0, mx, 60, 40);
+      mg.addColorStop(0, 'rgba(180, 220, 210, 0.14)');
+      mg.addColorStop(0.6, 'rgba(170, 210, 200, 0.06)');
+      mg.addColorStop(1, 'rgba(160, 200, 190, 0)');
+      ctx.fillStyle = mg;
+      ctx.beginPath();
+      ctx.ellipse(mx, 60, 50, 25, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Middle ridge — dense emerald rainforest
+    const ridge1 = ctx.createLinearGradient(0, 55, 0, h);
+    ridge1.addColorStop(0, '#2a5a3a');
+    ridge1.addColorStop(0.3, '#1e4a30');
+    ridge1.addColorStop(0.7, '#2a5838');
+    ridge1.addColorStop(1, '#3a6a4a');
     ctx.fillStyle = ridge1;
     ctx.beginPath();
-    ctx.moveTo(0, h);
-    ctx.lineTo(0, 120);
-    ctx.bezierCurveTo(40, 70, 80, 90, 120, 60);
-    ctx.bezierCurveTo(160, 40, 200, 80, 240, 70);
-    ctx.bezierCurveTo(280, 55, 320, 85, 360, 50);
-    ctx.bezierCurveTo(400, 30, 440, 70, 480, 55);
-    ctx.bezierCurveTo(500, 48, 510, 60, 512, 70);
-    ctx.lineTo(512, h);
-    ctx.closePath();
-    ctx.fill();
+    ctx.moveTo(0, h); ctx.lineTo(0, 115);
+    ctx.bezierCurveTo(35, 72, 75, 90, 115, 62);
+    ctx.bezierCurveTo(155, 42, 195, 80, 235, 68);
+    ctx.bezierCurveTo(275, 54, 315, 84, 355, 52);
+    ctx.bezierCurveTo(395, 35, 435, 68, 475, 55);
+    ctx.bezierCurveTo(500, 46, 510, 58, 512, 68);
+    ctx.lineTo(512, h); ctx.closePath(); ctx.fill();
 
-    // Closer ridge — lighter
-    const ridge2 = ctx.createLinearGradient(0, 90, 0, h);
-    ridge2.addColorStop(0, '#4a8060');
-    ridge2.addColorStop(1, '#5a9070');
+    // Emergent canopy trees poking above middle ridge
+    for (let x = 20; x < w; x += 35 + (x * 7) % 20) {
+      const baseY = 60 + Math.sin(x * 0.02) * 22 + Math.sin(x * 0.04) * 10;
+      const tH = 10 + (x * 3) % 12;
+      const tW = tH * 0.8;
+      // Dark canopy mass
+      ctx.fillStyle = `rgba(${18 + (x % 10)}, ${40 + (x % 20)}, ${24 + (x % 12)}, 0.5)`;
+      ctx.beginPath();
+      ctx.ellipse(x, baseY - tH * 0.4, tW, tH * 0.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Highlight on top
+      ctx.fillStyle = `rgba(${50 + (x % 15)}, ${90 + (x % 20)}, ${40 + (x % 10)}, 0.2)`;
+      ctx.beginPath();
+      ctx.ellipse(x - 2, baseY - tH * 0.6, tW * 0.5, tH * 0.25, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Mist layer between middle and near ridges
+    const mist1 = ctx.createLinearGradient(0, 80, 0, 130);
+    mist1.addColorStop(0, 'rgba(160, 210, 195, 0)');
+    mist1.addColorStop(0.4, 'rgba(165, 215, 200, 0.15)');
+    mist1.addColorStop(0.7, 'rgba(160, 210, 195, 0.1)');
+    mist1.addColorStop(1, 'rgba(155, 205, 190, 0)');
+    ctx.fillStyle = mist1;
+    ctx.fillRect(0, 80, w, 50);
+
+    // Nearest ridge — lush, saturated green
+    const ridge2 = ctx.createLinearGradient(0, 85, 0, h);
+    ridge2.addColorStop(0, '#1e5028');
+    ridge2.addColorStop(0.3, '#2a6035');
+    ridge2.addColorStop(0.6, '#357040');
+    ridge2.addColorStop(1, '#408050');
     ctx.fillStyle = ridge2;
     ctx.beginPath();
-    ctx.moveTo(0, h);
-    ctx.lineTo(0, 140);
-    ctx.bezierCurveTo(50, 110, 100, 130, 160, 100);
-    ctx.bezierCurveTo(200, 85, 260, 120, 320, 105);
-    ctx.bezierCurveTo(380, 90, 420, 115, 460, 100);
-    ctx.bezierCurveTo(490, 92, 510, 105, 512, 110);
-    ctx.lineTo(512, h);
-    ctx.closePath();
-    ctx.fill();
+    ctx.moveTo(0, h); ctx.lineTo(0, 138);
+    ctx.bezierCurveTo(45, 108, 95, 128, 155, 98);
+    ctx.bezierCurveTo(195, 84, 255, 114, 315, 100);
+    ctx.bezierCurveTo(375, 88, 415, 112, 455, 96);
+    ctx.bezierCurveTo(485, 88, 510, 100, 512, 108);
+    ctx.lineTo(512, h); ctx.closePath(); ctx.fill();
 
-    // Atmospheric haze (fade to sky at bottom)
-    const haze = ctx.createLinearGradient(0, 140, 0, h);
-    haze.addColorStop(0, 'rgba(135, 206, 235, 0)');
-    haze.addColorStop(1, 'rgba(135, 206, 235, 0.25)');
+    // Dense canopy texture on nearest ridge
+    for (let x = 3; x < w; x += 7) {
+      const baseY = 98 + Math.sin(x * 0.022) * 20 + Math.sin(x * 0.05) * 8;
+      const cr = 6 + (x * 5) % 8;
+      const gVal = 60 + (x * 3) % 40;
+      ctx.fillStyle = `rgba(${20 + (x % 12)}, ${gVal}, ${25 + (x % 10)}, 0.35)`;
+      ctx.beginPath();
+      ctx.arc(x, baseY, cr, Math.PI, 0);
+      ctx.fill();
+    }
+
+    // Bottom humidity haze
+    const haze = ctx.createLinearGradient(0, 125, 0, h);
+    haze.addColorStop(0, 'rgba(130, 195, 180, 0)');
+    haze.addColorStop(0.4, 'rgba(140, 200, 185, 0.1)');
+    haze.addColorStop(1, 'rgba(135, 206, 190, 0.22)');
     ctx.fillStyle = haze;
-    ctx.fillRect(0, 140, w, 60);
+    ctx.fillRect(0, 125, w, 75);
+
+    // Tropical birds — parrots in flight
+    ctx.strokeStyle = 'rgba(25, 45, 30, 0.2)';
+    ctx.lineWidth = 0.8;
+    for (const bx of [90, 220, 350, 450]) {
+      const by = 20 + (bx * 3) % 25;
+      ctx.beginPath();
+      ctx.moveTo(bx - 5, by + 2);
+      ctx.quadraticCurveTo(bx - 1, by - 1, bx, by);
+      ctx.quadraticCurveTo(bx + 1, by - 1, bx + 5, by + 2);
+      ctx.stroke();
+    }
 
     refresh();
     // Alias so existing code referencing 'bg-hills-far' still works
@@ -1294,82 +1480,238 @@ export class BootScene extends Phaser.Scene {
     const w = 512, h = 250;
     const { ctx, refresh } = this.canvas('hills-near-jungle', w, h);
 
-    // Dense foliage ridgeline
-    const foliage = ctx.createLinearGradient(0, 80, 0, h);
-    foliage.addColorStop(0, '#2d5a1e');
-    foliage.addColorStop(0.5, '#3a6a2c');
-    foliage.addColorStop(1, '#4a7a3a');
-    ctx.fillStyle = foliage;
-    ctx.beginPath();
-    ctx.moveTo(0, h);
-    ctx.lineTo(0, 160);
-    ctx.bezierCurveTo(40, 130, 80, 150, 120, 120);
-    ctx.bezierCurveTo(160, 100, 200, 135, 250, 115);
-    ctx.bezierCurveTo(300, 95, 340, 130, 380, 110);
-    ctx.bezierCurveTo(420, 90, 460, 120, 500, 105);
-    ctx.lineTo(512, 110);
-    ctx.lineTo(512, h);
-    ctx.closePath();
-    ctx.fill();
+    // Sky/background visible between tree trunks — dark jungle interior
+    const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+    bgGrad.addColorStop(0, '#0a1e0c');
+    bgGrad.addColorStop(0.5, '#122a14');
+    bgGrad.addColorStop(1, '#1a361a');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, w, h);
 
-    // Lighter foliage layer
-    ctx.fillStyle = 'rgba(60, 110, 40, 0.5)';
-    ctx.beginPath();
-    ctx.moveTo(0, h);
-    ctx.lineTo(0, 175);
-    ctx.bezierCurveTo(60, 145, 120, 165, 180, 140);
-    ctx.bezierCurveTo(240, 125, 300, 155, 360, 135);
-    ctx.bezierCurveTo(420, 120, 470, 148, 512, 140);
-    ctx.lineTo(512, h);
-    ctx.closePath();
-    ctx.fill();
+    // Big jungle trees filling the background with green vines
+    const trees = [
+      { x: -10, h: 130, bw: 14 }, { x: 30, h: 150, bw: 16 },
+      { x: 68, h: 140, bw: 15 }, { x: 105, h: 155, bw: 17 },
+      { x: 142, h: 145, bw: 16 }, { x: 178, h: 135, bw: 15 },
+      { x: 215, h: 150, bw: 16 }, { x: 252, h: 140, bw: 15 },
+      { x: 288, h: 155, bw: 17 }, { x: 325, h: 145, bw: 16 },
+      { x: 362, h: 135, bw: 15 }, { x: 398, h: 150, bw: 16 },
+      { x: 435, h: 140, bw: 15 }, { x: 472, h: 155, bw: 17 },
+      { x: 510, h: 145, bw: 16 },
+    ];
+    for (const t of trees) {
+      const tw = t.bw;
+      // Buttress roots — wide flared base
+      ctx.fillStyle = '#2a1a0e';
+      ctx.beginPath();
+      ctx.moveTo(t.x - tw * 2, h);
+      ctx.quadraticCurveTo(t.x - tw * 1.4, h - 18, t.x - tw * 0.5, h - 30);
+      ctx.lineTo(t.x + tw * 0.5, h - 30);
+      ctx.quadraticCurveTo(t.x + tw * 1.4, h - 18, t.x + tw * 2, h);
+      ctx.closePath();
+      ctx.fill();
 
-    // Tree trunks
-    const treeX = [85, 200, 340, 460];
-    for (const tx of treeX) {
-      const treeH = 65 + Math.sin(tx) * 15;
-      const trunkGrad = ctx.createLinearGradient(tx, h - treeH, tx, h);
-      trunkGrad.addColorStop(0, '#4a3020');
-      trunkGrad.addColorStop(1, '#3a2515');
+      // Main trunk — thick, tall
+      const trunkGrad = ctx.createLinearGradient(t.x - tw / 2, h - t.h, t.x + tw / 2, h);
+      trunkGrad.addColorStop(0, '#3a2a16');
+      trunkGrad.addColorStop(0.3, '#4a3420');
+      trunkGrad.addColorStop(0.7, '#3e2c18');
+      trunkGrad.addColorStop(1, '#2a1a0e');
       ctx.fillStyle = trunkGrad;
-      ctx.fillRect(tx - 3, h - treeH, 7, treeH);
+      const lean = Math.sin(t.x * 0.04) * 5;
+      ctx.beginPath();
+      ctx.moveTo(t.x - tw * 0.5, h - 30);
+      ctx.quadraticCurveTo(t.x - tw * 0.4 + lean * 0.5, h - t.h * 0.5, t.x - tw * 0.3 + lean, h - t.h);
+      ctx.lineTo(t.x + tw * 0.3 + lean, h - t.h);
+      ctx.quadraticCurveTo(t.x + tw * 0.4 + lean * 0.5, h - t.h * 0.5, t.x + tw * 0.5, h - 30);
+      ctx.closePath();
+      ctx.fill();
 
       // Bark texture
-      ctx.strokeStyle = 'rgba(30, 20, 10, 0.3)';
+      ctx.strokeStyle = 'rgba(20, 12, 5, 0.2)';
       ctx.lineWidth = 0.5;
-      for (let by = h - treeH + 5; by < h; by += 6) {
+      for (let by = h - t.h + 6; by < h - 30; by += 4) {
         ctx.beginPath();
-        ctx.moveTo(tx - 2, by);
-        ctx.lineTo(tx + 3, by + 2);
+        ctx.moveTo(t.x - tw * 0.35, by);
+        ctx.quadraticCurveTo(t.x, by + (by % 2 ? 1 : -1), t.x + tw * 0.35, by + 0.5);
         ctx.stroke();
       }
 
-      // Canopy (layered circles)
-      const cy = h - treeH - 15;
-      const canopyGrad = ctx.createRadialGradient(tx, cy, 0, tx, cy, 30);
-      canopyGrad.addColorStop(0, '#3a7a2a');
-      canopyGrad.addColorStop(0.6, '#2d5a1e');
-      canopyGrad.addColorStop(1, 'rgba(35, 70, 22, 0)');
-      ctx.fillStyle = canopyGrad;
+      // Moss patches on trunk
+      ctx.fillStyle = 'rgba(40, 85, 30, 0.2)';
       ctx.beginPath();
-      ctx.arc(tx, cy, 30, 0, Math.PI * 2);
+      ctx.ellipse(t.x - tw * 0.25, h - t.h * 0.45, tw * 0.35, 10, 0.2, 0, Math.PI * 2);
       ctx.fill();
-      // Inner lighter area
-      ctx.fillStyle = 'rgba(80, 140, 50, 0.3)';
+      ctx.fillStyle = 'rgba(35, 75, 25, 0.15)';
       ctx.beginPath();
-      ctx.arc(tx - 5, cy - 5, 14, 0, Math.PI * 2);
+      ctx.ellipse(t.x + tw * 0.2, h - t.h * 0.65, tw * 0.3, 7, -0.1, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Wild tropical canopy — irregular spreading branches with big leaves
+      const cy = h - t.h - 8;
+      const topX = t.x + lean;
+
+      // Large spreading branches from trunk top
+      const branches = [
+        { angle: -0.8, len: 35 + tw }, { angle: -0.3, len: 40 + tw },
+        { angle: 0.2, len: 38 + tw }, { angle: 0.7, len: 34 + tw },
+        { angle: -1.2, len: 28 + tw }, { angle: 1.1, len: 30 + tw },
+      ];
+      for (const br of branches) {
+        const bx = topX + Math.sin(br.angle) * br.len;
+        const by = cy - Math.cos(br.angle) * br.len * 0.4;
+        // Branch
+        ctx.strokeStyle = '#3a2a16';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(topX, cy);
+        ctx.quadraticCurveTo(topX + (bx - topX) * 0.4, cy - 8, bx, by);
+        ctx.stroke();
+
+        // Big tropical leaves at branch ends — elongated, pointed, irregular
+        for (let li = 0; li < 3; li++) {
+          const leafAngle = br.angle + (li - 1) * 0.4;
+          const leafLen = 14 + (li * 7 + Math.abs(t.x)) % 10;
+          const leafTip_x = bx + Math.sin(leafAngle) * leafLen;
+          const leafTip_y = by - Math.cos(leafAngle) * leafLen * 0.3 + li * 3;
+          const gv = 100 + (li * 30 + t.x) % 60;
+          ctx.fillStyle = `rgba(${20 + li * 8}, ${gv}, ${15 + li * 5}, 0.55)`;
+          ctx.beginPath();
+          ctx.moveTo(bx, by);
+          ctx.quadraticCurveTo(bx + (leafTip_x - bx) * 0.5 + 4, by + (leafTip_y - by) * 0.5 - 5, leafTip_x, leafTip_y);
+          ctx.quadraticCurveTo(bx + (leafTip_x - bx) * 0.5 - 4, by + (leafTip_y - by) * 0.5 + 5, bx, by);
+          ctx.closePath();
+          ctx.fill();
+          // Leaf midrib
+          ctx.strokeStyle = `rgba(15, ${gv - 30}, 10, 0.3)`;
+          ctx.lineWidth = 0.5;
+          ctx.beginPath();
+          ctx.moveTo(bx, by);
+          ctx.lineTo(leafTip_x, leafTip_y);
+          ctx.stroke();
+        }
+      }
+
+      // Giant banana-style leaves — long drooping broad leaves
+      const bananaLeaves = [
+        { side: -1, droop: 0.3 }, { side: 1, droop: 0.5 },
+        { side: -1, droop: 0.7 }, { side: 1, droop: 0.2 },
+      ];
+      for (const bl of bananaLeaves) {
+        const blLen = 25 + tw;
+        const blStartY = cy + 5 + bl.droop * 15;
+        const blEndX = topX + bl.side * blLen;
+        const blEndY = blStartY + bl.droop * blLen * 0.5;
+        const gv = 90 + (Math.abs(t.x * bl.side * 10)) % 50;
+        // Broad leaf shape
+        ctx.fillStyle = `rgba(${25 + bl.droop * 15}, ${gv}, ${18}, 0.5)`;
+        ctx.beginPath();
+        ctx.moveTo(topX, blStartY);
+        ctx.quadraticCurveTo(topX + bl.side * blLen * 0.5, blStartY - 8, blEndX, blEndY);
+        ctx.quadraticCurveTo(topX + bl.side * blLen * 0.5, blStartY + 10, topX, blStartY);
+        ctx.closePath();
+        ctx.fill();
+        // Central vein
+        ctx.strokeStyle = `rgba(20, ${gv - 25}, 12, 0.35)`;
+        ctx.lineWidth = 0.7;
+        ctx.beginPath();
+        ctx.moveTo(topX, blStartY);
+        ctx.quadraticCurveTo(topX + bl.side * blLen * 0.5, blStartY + 1, blEndX, blEndY);
+        ctx.stroke();
+      }
+
+      // --- GREEN VINES hanging from branches ---
+      const spread = 30 + tw;
+      const vineCount = 3 + (t.x % 3);
+      for (let vi = 0; vi < vineCount; vi++) {
+        const vx = topX - spread + (vi / vineCount) * spread * 2;
+        const vineLen = 45 + (vi * 17 + t.x) % 55;
+        const sway = Math.sin(vx * 0.1 + vi) * 8;
+        const vineStartY = cy + 10;
+
+        // Main vine strand
+        ctx.strokeStyle = `rgba(${30 + vi * 5}, ${80 + vi * 10}, ${20 + vi * 3}, ${0.35 + vi * 0.03})`;
+        ctx.lineWidth = 1.2 + (vi % 2) * 0.5;
+        ctx.beginPath();
+        ctx.moveTo(vx, vineStartY);
+        ctx.bezierCurveTo(
+          vx + sway * 0.3, vineStartY + vineLen * 0.3,
+          vx + sway, vineStartY + vineLen * 0.6,
+          vx + sway * 0.6, vineStartY + vineLen,
+        );
+        ctx.stroke();
+
+        // Small green leaves along vine
+        for (let lp = 0.2; lp < 1.0; lp += 0.18) {
+          const lx = vx + sway * lp * 0.8;
+          const ly = vineStartY + vineLen * lp;
+          const side = (Math.floor(lp * 10) % 2) ? -1 : 1;
+          ctx.fillStyle = `rgba(${40 + vi * 4}, ${90 + vi * 8}, ${28}, 0.35)`;
+          ctx.beginPath();
+          ctx.ellipse(lx + side * 3, ly, 3, 1.5, side * 0.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    // Dense tropical undergrowth — big broad leaves, ferns, monstera
+    for (let fx = 0; fx < w; fx += 20) {
+      const fy = h - 8;
+      const gv = 80 + (fx * 7) % 50;
+
+      // Large monstera/split-leaf philodendron shapes
+      for (let ml = -1; ml <= 1; ml += 2) {
+        const mx = fx + ml * 8;
+        const my = fy - 12;
+        ctx.fillStyle = `rgba(${25 + (fx % 15)}, ${gv}, ${18}, 0.45)`;
+        ctx.beginPath();
+        ctx.moveTo(fx, fy);
+        ctx.quadraticCurveTo(fx + ml * 3, fy - 18, mx, my);
+        ctx.quadraticCurveTo(mx + ml * 6, my - 4, mx + ml * 10, my + 2);
+        ctx.quadraticCurveTo(mx + ml * 5, my + 8, fx, fy);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Tall tropical grass/reeds
+      for (let g = -2; g <= 2; g++) {
+        const gh = 10 + Math.abs(g) * 2 + (fx % 5);
+        ctx.strokeStyle = `rgba(30, ${gv + 10}, 20, 0.4)`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(fx + g * 3, fy);
+        ctx.quadraticCurveTo(fx + g * 4, fy - gh * 0.6, fx + g * 5, fy - gh);
+        ctx.stroke();
+      }
+    }
+
+    // Bright tropical flowers peeking through undergrowth
+    const flowers = [
+      { x: 35, y: 228, c: '#ff4466' }, { x: 120, y: 230, c: '#ffaa22' },
+      { x: 210, y: 226, c: '#ff66aa' }, { x: 310, y: 229, c: '#ff4466' },
+      { x: 400, y: 227, c: '#ffcc33' }, { x: 480, y: 230, c: '#ff66aa' },
+    ];
+    for (const fl of flowers) {
+      for (let p = 0; p < 5; p++) {
+        const pa = p * Math.PI * 2 / 5;
+        ctx.fillStyle = fl.c;
+        ctx.beginPath();
+        ctx.ellipse(fl.x + Math.cos(pa) * 2.5, fl.y + Math.sin(pa) * 2.5, 2, 1.2, pa, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#ffee55';
+      ctx.beginPath();
+      ctx.arc(fl.x, fl.y, 1.2, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    // Hanging vines
-    ctx.strokeStyle = 'rgba(30, 60, 20, 0.4)';
-    ctx.lineWidth = 1.5;
-    for (const tx of [85, 340]) {
-      ctx.beginPath();
-      ctx.moveTo(tx + 10, h - 60);
-      ctx.quadraticCurveTo(tx + 14, h - 35, tx + 8, h - 15);
-      ctx.stroke();
-    }
+    // Warm humidity haze at base
+    const hazeNear = ctx.createLinearGradient(0, h - 35, 0, h);
+    hazeNear.addColorStop(0, 'rgba(80, 140, 80, 0)');
+    hazeNear.addColorStop(0.5, 'rgba(90, 150, 90, 0.06)');
+    hazeNear.addColorStop(1, 'rgba(100, 160, 100, 0.1)');
+    ctx.fillStyle = hazeNear;
+    ctx.fillRect(0, h - 35, w, 35);
 
     refresh();
     // Alias so existing code referencing 'bg-hills-near' still works
@@ -1395,6 +1737,9 @@ export class BootScene extends Phaser.Scene {
     this.makeGroundMountain();
     this.makeHillsFarMountain();
     this.makeHillsNearMountain();
+    this.makeGroundTundra();
+    this.makeHillsFarTundra();
+    this.makeHillsNearTundra();
   }
 
   // ---- SWAMP GROUND ----
@@ -2306,6 +2651,267 @@ export class BootScene extends Phaser.Scene {
     hazeGrad.addColorStop(1, 'rgba(180, 195, 215, 0.3)');
     ctx.fillStyle = hazeGrad;
     ctx.fillRect(0, h - 40, w, 40);
+
+    refresh();
+  }
+
+  // ---- TUNDRA GROUND ----
+  private makeGroundTundra(): void {
+    const w = 128, h = 76;
+    const { ctx, refresh } = this.canvas('ground-tundra', w, h);
+
+    // Frozen ground — icy white-blue
+    const iceGrad = ctx.createLinearGradient(0, 0, 0, h);
+    iceGrad.addColorStop(0, '#d8e4f0');
+    iceGrad.addColorStop(0.3, '#c4d4e4');
+    iceGrad.addColorStop(0.7, '#b0c4d8');
+    iceGrad.addColorStop(1, '#98b0c8');
+    ctx.fillStyle = iceGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Permafrost cracks
+    ctx.strokeStyle = 'rgba(80, 100, 130, 0.35)';
+    ctx.lineWidth = 0.7;
+    for (let i = 0; i < 8; i++) {
+      const rx = (i * 41 + 5) % w;
+      const ry = 12 + (i * 27) % (h - 18);
+      ctx.beginPath();
+      ctx.moveTo(rx, ry);
+      ctx.lineTo(rx + 8, ry + 2);
+      ctx.lineTo(rx + 14, ry - 1);
+      ctx.lineTo(rx + 22, ry + 3);
+      ctx.stroke();
+    }
+
+    // Snow drifts
+    ctx.fillStyle = 'rgba(240, 246, 255, 0.5)';
+    const drifts = [
+      { x: 10, y: 20, rx: 12, ry: 4 },
+      { x: 45, y: 40, rx: 15, ry: 3.5 },
+      { x: 80, y: 15, rx: 10, ry: 3 },
+      { x: 110, y: 50, rx: 14, ry: 4 },
+      { x: 30, y: 60, rx: 11, ry: 3 },
+      { x: 95, y: 35, rx: 8, ry: 2.5 },
+    ];
+    for (const d of drifts) {
+      ctx.beginPath();
+      ctx.ellipse(d.x, d.y, d.rx, d.ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Frozen pebbles / ice chunks
+    ctx.fillStyle = 'rgba(160, 185, 210, 0.4)';
+    for (let i = 0; i < 12; i++) {
+      const px = (i * 29 + 11) % w;
+      const py = 10 + (i * 23 + 7) % (h - 16);
+      ctx.beginPath();
+      ctx.ellipse(px, py, 1.5 + (i % 2), 1, i * 0.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Icy surface sheen at top
+    const sheenGrad = ctx.createLinearGradient(0, 0, 0, 8);
+    sheenGrad.addColorStop(0, 'rgba(220, 235, 255, 0.5)');
+    sheenGrad.addColorStop(1, 'rgba(200, 220, 245, 0.2)');
+    ctx.fillStyle = sheenGrad;
+    ctx.fillRect(0, 0, w, 6);
+
+    refresh();
+  }
+
+  // ---- TUNDRA HILLS FAR ----
+  private makeHillsFarTundra(): void {
+    const w = 512, h = 200;
+    const { ctx, refresh } = this.canvas('hills-far-tundra', w, h);
+
+    // Pale overcast sky
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
+    skyGrad.addColorStop(0, '#c0cee0');
+    skyGrad.addColorStop(0.4, '#ccd8e6');
+    skyGrad.addColorStop(1, '#d8e0ea');
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Distant frozen hills — very faint, flat tundra horizon
+    ctx.fillStyle = '#a8b8cc';
+    ctx.beginPath();
+    ctx.moveTo(0, h);
+    ctx.lineTo(0, 140);
+    ctx.bezierCurveTo(60, 132, 120, 138, 180, 128);
+    ctx.bezierCurveTo(240, 120, 300, 135, 360, 125);
+    ctx.bezierCurveTo(420, 118, 470, 130, 512, 122);
+    ctx.lineTo(512, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Snow covering on far hills
+    ctx.fillStyle = 'rgba(230, 238, 248, 0.45)';
+    ctx.beginPath();
+    ctx.moveTo(0, 140);
+    ctx.bezierCurveTo(60, 132, 120, 138, 180, 128);
+    ctx.bezierCurveTo(240, 120, 300, 135, 360, 125);
+    ctx.bezierCurveTo(420, 118, 470, 130, 512, 122);
+    ctx.lineTo(512, 132);
+    ctx.bezierCurveTo(470, 140, 420, 128, 360, 135);
+    ctx.bezierCurveTo(300, 145, 240, 130, 180, 138);
+    ctx.bezierCurveTo(120, 148, 60, 142, 0, 150);
+    ctx.closePath();
+    ctx.fill();
+
+    // Faint aurora / sky glow at top
+    const auroraGrad = ctx.createLinearGradient(0, 0, 0, 80);
+    auroraGrad.addColorStop(0, 'rgba(100, 200, 180, 0.08)');
+    auroraGrad.addColorStop(0.5, 'rgba(80, 180, 200, 0.04)');
+    auroraGrad.addColorStop(1, 'rgba(80, 160, 200, 0)');
+    ctx.fillStyle = auroraGrad;
+    ctx.fillRect(0, 0, w, 80);
+
+    // Low grey clouds
+    ctx.fillStyle = 'rgba(180, 190, 205, 0.3)';
+    const clouds = [
+      { x: 60, y: 50, rx: 45, ry: 12 },
+      { x: 200, y: 35, rx: 55, ry: 14 },
+      { x: 380, y: 55, rx: 40, ry: 10 },
+      { x: 480, y: 40, rx: 35, ry: 11 },
+    ];
+    for (const c of clouds) {
+      ctx.beginPath();
+      ctx.ellipse(c.x, c.y, c.rx, c.ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(c.x + c.rx * 0.5, c.y - 4, c.rx * 0.5, c.ry * 0.6, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Distant frozen lake shimmer
+    ctx.fillStyle = 'rgba(160, 195, 220, 0.2)';
+    ctx.beginPath();
+    ctx.ellipse(256, 170, 80, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(200, 225, 245, 0.15)';
+    ctx.beginPath();
+    ctx.ellipse(256, 168, 50, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    refresh();
+  }
+
+  // ---- TUNDRA HILLS NEAR ----
+  private makeHillsNearTundra(): void {
+    const w = 512, h = 250;
+    const { ctx, refresh } = this.canvas('hills-near-tundra', w, h);
+
+    // Base
+    ctx.fillStyle = '#c4d0e0';
+    ctx.fillRect(0, 0, w, h);
+
+    // Near rolling tundra terrain — low, wide, snow-covered
+    const terrainGrad = ctx.createLinearGradient(0, 100, 0, h);
+    terrainGrad.addColorStop(0, '#b0bfd0');
+    terrainGrad.addColorStop(0.3, '#a0b0c4');
+    terrainGrad.addColorStop(0.7, '#94a8bc');
+    terrainGrad.addColorStop(1, '#8898b0');
+    ctx.fillStyle = terrainGrad;
+    ctx.beginPath();
+    ctx.moveTo(0, h);
+    ctx.lineTo(0, 150);
+    ctx.bezierCurveTo(40, 135, 80, 145, 120, 130);
+    ctx.bezierCurveTo(160, 118, 200, 140, 250, 125);
+    ctx.bezierCurveTo(300, 112, 340, 135, 380, 120);
+    ctx.bezierCurveTo(420, 108, 460, 128, 500, 115);
+    ctx.lineTo(512, 120);
+    ctx.lineTo(512, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Snow layer on top of terrain
+    ctx.fillStyle = 'rgba(225, 235, 248, 0.5)';
+    ctx.beginPath();
+    ctx.moveTo(0, 150);
+    ctx.bezierCurveTo(40, 135, 80, 145, 120, 130);
+    ctx.bezierCurveTo(160, 118, 200, 140, 250, 125);
+    ctx.bezierCurveTo(300, 112, 340, 135, 380, 120);
+    ctx.bezierCurveTo(420, 108, 460, 128, 500, 115);
+    ctx.lineTo(512, 120);
+    ctx.lineTo(512, 130);
+    ctx.bezierCurveTo(460, 138, 420, 118, 380, 130);
+    ctx.bezierCurveTo(340, 145, 300, 122, 250, 135);
+    ctx.bezierCurveTo(200, 150, 160, 128, 120, 140);
+    ctx.bezierCurveTo(80, 155, 40, 145, 0, 160);
+    ctx.closePath();
+    ctx.fill();
+
+    // Exposed dark rock patches poking through snow
+    ctx.fillStyle = 'rgba(70, 80, 95, 0.3)';
+    const rockPatches = [
+      { x: 80, y: 145, rx: 10, ry: 4 },
+      { x: 220, y: 138, rx: 8, ry: 3 },
+      { x: 350, y: 132, rx: 12, ry: 4 },
+      { x: 470, y: 125, rx: 9, ry: 3 },
+    ];
+    for (const r of rockPatches) {
+      ctx.beginPath();
+      ctx.ellipse(r.x, r.y, r.rx, r.ry, 0.1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Dead/frozen scrub bushes
+    ctx.strokeStyle = '#5a5a68';
+    ctx.lineWidth = 1.5;
+    ctx.lineCap = 'round';
+    const shrubs = [
+      { x: 50, y: 165 }, { x: 140, y: 155 }, { x: 260, y: 148 },
+      { x: 370, y: 152 }, { x: 450, y: 140 },
+    ];
+    for (const s of shrubs) {
+      for (let b = -2; b <= 2; b++) {
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y);
+        ctx.lineTo(s.x + b * 4, s.y - 8 - Math.abs(b));
+        ctx.stroke();
+      }
+    }
+
+    // Scattered snow boulders
+    const boulderGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, 8);
+    boulderGrad.addColorStop(0, 'rgba(190, 205, 225, 0.5)');
+    boulderGrad.addColorStop(1, 'rgba(140, 160, 185, 0.4)');
+    const boulders = [
+      { x: 100, y: 170, r: 6 }, { x: 200, y: 160, r: 5 },
+      { x: 310, y: 155, r: 7 }, { x: 420, y: 148, r: 5 },
+    ];
+    for (const b of boulders) {
+      ctx.save();
+      ctx.translate(b.x, b.y);
+      const bg = ctx.createRadialGradient(-1, -1, 0, 0, 0, b.r);
+      bg.addColorStop(0, 'rgba(190, 205, 225, 0.5)');
+      bg.addColorStop(1, 'rgba(140, 160, 185, 0.4)');
+      ctx.fillStyle = bg;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, b.r, b.r * 0.65, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Blowing snow / ground haze
+    const hazeGrad = ctx.createLinearGradient(0, h - 50, 0, h);
+    hazeGrad.addColorStop(0, 'rgba(200, 215, 235, 0)');
+    hazeGrad.addColorStop(0.5, 'rgba(210, 220, 240, 0.15)');
+    hazeGrad.addColorStop(1, 'rgba(220, 230, 245, 0.35)');
+    ctx.fillStyle = hazeGrad;
+    ctx.fillRect(0, h - 50, w, 50);
+
+    // Wind-blown snow streaks
+    ctx.strokeStyle = 'rgba(230, 240, 255, 0.2)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 6; i++) {
+      const sy = 200 + (i * 17) % 40;
+      const sx = (i * 83) % w;
+      ctx.beginPath();
+      ctx.moveTo(sx, sy);
+      ctx.lineTo(sx + 40 + (i % 3) * 15, sy - 2);
+      ctx.stroke();
+    }
 
     refresh();
   }

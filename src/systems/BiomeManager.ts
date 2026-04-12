@@ -2,7 +2,7 @@
 // Biome Manager
 // Tracks distance and triggers biome transitions as the
 // raptor runs through different environments:
-// Jungle -> Swamp (1000m) -> Volcano (2500m) -> Caves (5000m)
+// Jungle -> Swamp (1000m) -> Volcano (2500m) -> Caves (5000m) -> Mountain (8000m) -> Tundra (12000m)
 // ======================
 
 import {
@@ -26,13 +26,15 @@ export class BiomeManager {
    * Check if we've crossed a biome threshold.
    * Returns the new BiomeConfig if a transition happened, or null if not.
    */
-  private static readonly BIOME_ORDER: BiomeName[] = ['JUNGLE', 'SWAMP', 'VOLCANO', 'CAVES', 'MOUNTAIN'];
+  private static readonly BIOME_ORDER: BiomeName[] = ['JUNGLE', 'SWAMP', 'VOLCANO', 'CAVES', 'MOUNTAIN', 'TUNDRA'];
 
   update(distance: number): BiomeConfig | null {
     let newBiome: BiomeName | null = null;
     const idx = BiomeManager.BIOME_ORDER.indexOf(this.currentBiomeName);
 
-    if (distance >= BIOME_THRESHOLDS.MOUNTAIN && idx < 4) {
+    if (distance >= BIOME_THRESHOLDS.TUNDRA && idx < 5) {
+      newBiome = 'TUNDRA';
+    } else if (distance >= BIOME_THRESHOLDS.MOUNTAIN && idx < 4) {
       newBiome = 'MOUNTAIN';
     } else if (distance >= BIOME_THRESHOLDS.CAVES && idx < 3) {
       newBiome = 'CAVES';

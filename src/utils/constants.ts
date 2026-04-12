@@ -100,10 +100,11 @@ export const BIOME_THRESHOLDS = {
   VOLCANO: 2500,
   CAVES: 5000,
   MOUNTAIN: 8000,
+  TUNDRA: 12000,
 };
 
 // --- Biome configurations ---
-export type BiomeName = 'JUNGLE' | 'SWAMP' | 'VOLCANO' | 'CAVES' | 'MOUNTAIN';
+export type BiomeName = 'JUNGLE' | 'SWAMP' | 'VOLCANO' | 'CAVES' | 'MOUNTAIN' | 'TUNDRA';
 
 export interface BiomeConfig {
   name: BiomeName;
@@ -161,6 +162,15 @@ export const BIOME_CONFIGS: Record<BiomeName, BiomeConfig> = {
     obstacleTypes: ['log', 'pterodactyl', 'rock'],
     foodTypes: ['bug', 'lizard', 'fish', 'egg'],
   },
+  TUNDRA: {
+    name: 'TUNDRA',
+    bgColor: 0xc8d8e8,
+    ground: 'ground-tundra',
+    hillsFar: 'hills-far-tundra',
+    hillsNear: 'hills-near-tundra',
+    obstacleTypes: ['log', 'pterodactyl', 'rock'],
+    foodTypes: ['bug', 'lizard', 'fish', 'egg'],
+  },
 };
 
 // --- Platform constants ---
@@ -189,7 +199,7 @@ export const OBSTACLE_SPAWN_TABLE: SpawnEntry[] = [
   { type: 'stegosaurus', weight: 10, unlockDistance: 1000 },
   { type: 'dilophosaurus', weight: 8, unlockDistance: 1500 },
   { type: 'ankylosaurus', weight: 8, unlockDistance: 2000 },
-  { type: 'parasaurolophus', weight: 10, unlockDistance: 800 },
+  { type: 'parasaurolophus', weight: 10, unlockDistance: 5000 },
 ];
 
 // --- T-Rex chase event ---
