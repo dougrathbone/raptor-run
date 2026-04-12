@@ -144,7 +144,7 @@ export class Raptor extends Phaser.Physics.Arcade.Sprite {
   takeDamage(): boolean {
     if (this.invincibleTimer > 0 || this._isDashing) return false;
 
-    this.hp--;
+    this.hp -= 4; // 1 full heart = 4 quarter-heart units
     this.invincibleTimer = INVINCIBLE_DURATION;
 
     this.scene.tweens.add({

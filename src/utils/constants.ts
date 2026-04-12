@@ -35,7 +35,7 @@ export const STAGES = {
     bodyWidth: 30,
     bodyHeight: 36,
     crouchHeight: 20,
-    hp: 2,
+    hp: 8,   // 2 hearts (4 units per heart)
   },
   JUVENILE: {
     name: 'Juvenile',
@@ -43,7 +43,7 @@ export const STAGES = {
     bodyWidth: 40,
     bodyHeight: 48,
     crouchHeight: 26,
-    hp: 3,
+    hp: 12,  // 3 hearts
   },
   ADULT: {
     name: 'Adult',
@@ -51,7 +51,7 @@ export const STAGES = {
     bodyWidth: 50,
     bodyHeight: 58,
     crouchHeight: 32,
-    hp: 5,
+    hp: 20,  // 5 hearts
   },
 };
 
@@ -99,10 +99,11 @@ export const BIOME_THRESHOLDS = {
   SWAMP: 1000,
   VOLCANO: 2500,
   CAVES: 5000,
+  MOUNTAIN: 8000,
 };
 
 // --- Biome configurations ---
-export type BiomeName = 'JUNGLE' | 'SWAMP' | 'VOLCANO' | 'CAVES';
+export type BiomeName = 'JUNGLE' | 'SWAMP' | 'VOLCANO' | 'CAVES' | 'MOUNTAIN';
 
 export interface BiomeConfig {
   name: BiomeName;
@@ -151,6 +152,15 @@ export const BIOME_CONFIGS: Record<BiomeName, BiomeConfig> = {
     obstacleTypes: ['log', 'pterodactyl', 'rock'],
     foodTypes: ['bug', 'lizard', 'fish', 'egg'],
   },
+  MOUNTAIN: {
+    name: 'MOUNTAIN',
+    bgColor: 0x8ab4d8,
+    ground: 'ground-mountain',
+    hillsFar: 'hills-far-mountain',
+    hillsNear: 'hills-near-mountain',
+    obstacleTypes: ['log', 'pterodactyl', 'rock'],
+    foodTypes: ['bug', 'lizard', 'fish', 'egg'],
+  },
 };
 
 // --- Platform constants ---
@@ -179,6 +189,7 @@ export const OBSTACLE_SPAWN_TABLE: SpawnEntry[] = [
   { type: 'stegosaurus', weight: 10, unlockDistance: 1000 },
   { type: 'dilophosaurus', weight: 8, unlockDistance: 1500 },
   { type: 'ankylosaurus', weight: 8, unlockDistance: 2000 },
+  { type: 'parasaurolophus', weight: 10, unlockDistance: 800 },
 ];
 
 // --- T-Rex chase event ---

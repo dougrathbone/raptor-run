@@ -293,6 +293,13 @@ export class GameScene extends Phaser.Scene {
     this.raptor.eat();
     this.hud.showCombo(this.scoreManager.getComboMultiplier());
     this.showFloatingText(`+${points}`, food.x, food.y);
+
+    // Adult stage: eating food regenerates a quarter heart
+    if (this.raptor.stage === 'adult' && this.raptor.hp < this.raptor.maxHp) {
+      this.raptor.hp = Math.min(this.raptor.hp + 1, this.raptor.maxHp);
+      this.showFloatingText('+HP', food.x, food.y - 20, '#44ff44', 16);
+    }
+
     food.destroy();
   }
 

@@ -75,10 +75,14 @@ export class HUD {
   }
 
   // --- Hearts ---
+  // HP is stored in quarter-heart units (4 units = 1 full heart).
+
+  private heartCount = 0;
 
   createHearts(count: number): void {
     this.hearts.forEach((h) => h.destroy());
     this.hearts = [];
+    this.heartCount = count;
 
     for (let i = 0; i < count; i++) {
       const heart = this.scene.add
@@ -90,12 +94,35 @@ export class HUD {
   }
 
   updateHearts(current: number, max: number): void {
-    // Rebuild hearts if max HP changed (evolution!)
-    if (this.hearts.length !== max) {
-      this.createHearts(max);
+    const numHearts = Math.floor(max / 4);
+    // Rebuild hearts if heart count changed (evolution!)
+    if (this.heartCount !== numHearts) {
+      this.createHearts(numHearts);
     }
     for (let i = 0; i < this.hearts.length; i++) {
-      this.hearts[i].setAlpha(i < current ? 1 : 0.25);
+      const heartBase = i * 4; // quarter-units consumed by previous hearts
+      const remaining = Math.max(0, current - heartBase);
+      if (remaining >= 4) {
+        // Full heart
+        this.hearts[i].setAlpha(1);
+        this.hearts[i].setTint(0xffffff);
+      } else if (remaining === 3) {
+        // 3/4 heart
+        this.hearts[i].setAlpha(0.85);
+        this.hearts[i].setTint(0xffffff);
+      } else if (remaining === 2) {
+        // 1/2 heart
+        this.hearts[i].setAlpha(0.65);
+        this.hearts[i].setTint(0xffffff);
+      } else if (remaining === 1) {
+        // 1/4 heart
+        this.hearts[i].setAlpha(0.45);
+        this.hearts[i].setTint(0xffaaaa);
+      } else {
+        // Empty heart
+        this.hearts[i].setAlpha(0.2);
+        this.hearts[i].setTint(0x666666);
+      }
     }
   }
 

@@ -33,8 +33,7 @@ export class BootScene extends Phaser.Scene {
     // Stegosaurus (CC0 from OpenGameArt 2D Dinosaur Set)
     this.load.image('stegosaurus-sprite', 'assets/sprites/stegosaurus.png');
 
-    // Dilophosaurus
-    this.load.image('dilophosaurus-sprite', 'assets/sprites/dilophosaurus.png');
+    // Dilophosaurus — use canvas-drawn cartoon version (no external sprite)
   }
 
   create(): void {
@@ -97,6 +96,7 @@ export class BootScene extends Phaser.Scene {
     this.makeHazardDilophosaurus();
     this.makeHazardVenom();
     this.makeHazardAnkylosaurus();
+    this.makeHazardParasaurolophus();
     this.makeHazardTrex();
     this.makeHazardPterodactyl();
     this.makeHazardRock();
@@ -1392,6 +1392,9 @@ export class BootScene extends Phaser.Scene {
     this.makeGroundCaves();
     this.makeHillsFarCaves();
     this.makeHillsNearCaves();
+    this.makeGroundMountain();
+    this.makeHillsFarMountain();
+    this.makeHillsNearMountain();
   }
 
   // ---- SWAMP GROUND ----
@@ -2024,6 +2027,285 @@ export class BootScene extends Phaser.Scene {
     ctx.bezierCurveTo(240, 200, 300, 212, 360, 206);
     ctx.bezierCurveTo(420, 198, 480, 210, 512, 205);
     ctx.stroke();
+
+    refresh();
+  }
+
+  // ---- MOUNTAIN GROUND ----
+  private makeGroundMountain(): void {
+    const w = 128, h = 76;
+    const { ctx, refresh } = this.canvas('ground-mountain', w, h);
+
+    // Rocky grey-brown ground
+    const rockGrad = ctx.createLinearGradient(0, 10, 0, h);
+    rockGrad.addColorStop(0, '#7a7a80');
+    rockGrad.addColorStop(0.3, '#686870');
+    rockGrad.addColorStop(0.7, '#585860');
+    rockGrad.addColorStop(1, '#4a4a55');
+    ctx.fillStyle = rockGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Scattered gravel and pebbles
+    ctx.fillStyle = 'rgba(90, 90, 100, 0.5)';
+    for (let i = 0; i < 20; i++) {
+      const dx = (i * 31 + 7) % w;
+      const dy = 14 + (i * 19 + 5) % (h - 20);
+      const dr = 1 + (i % 3);
+      ctx.beginPath();
+      ctx.ellipse(dx, dy, dr, dr * 0.7, (i * 0.5), 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Stone crack lines
+    ctx.strokeStyle = 'rgba(50, 50, 58, 0.4)';
+    ctx.lineWidth = 0.8;
+    for (let i = 0; i < 5; i++) {
+      const rx = (i * 47 + 12) % w;
+      const ry = 16 + (i * 29) % (h - 22);
+      ctx.beginPath();
+      ctx.moveTo(rx, ry);
+      ctx.quadraticCurveTo(rx + 10, ry + 3, rx + 20, ry - 1);
+      ctx.stroke();
+    }
+
+    // Sparse snow patches
+    ctx.fillStyle = 'rgba(220, 230, 240, 0.25)';
+    const snowPatches = [
+      { x: 15, y: 18, rx: 8, ry: 3 },
+      { x: 55, y: 35, rx: 6, ry: 2.5 },
+      { x: 100, y: 22, rx: 10, ry: 3 },
+      { x: 75, y: 55, rx: 7, ry: 2 },
+    ];
+    for (const s of snowPatches) {
+      ctx.beginPath();
+      ctx.ellipse(s.x, s.y, s.rx, s.ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Surface edge — rocky top
+    const surfGrad = ctx.createLinearGradient(0, 0, 0, 10);
+    surfGrad.addColorStop(0, '#8a8a92');
+    surfGrad.addColorStop(1, '#7a7a82');
+    ctx.fillStyle = surfGrad;
+    ctx.fillRect(0, 0, w, 6);
+
+    refresh();
+  }
+
+  // ---- MOUNTAIN HILLS FAR ----
+  private makeHillsFarMountain(): void {
+    const w = 512, h = 200;
+    const { ctx, refresh } = this.canvas('hills-far-mountain', w, h);
+
+    // Sky gradient — pale blue fading down
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
+    skyGrad.addColorStop(0, '#a0c4e0');
+    skyGrad.addColorStop(0.5, '#b8d4ea');
+    skyGrad.addColorStop(1, '#c8ddf0');
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Distant mountain range (furthest, faint blue-grey)
+    ctx.fillStyle = '#8a9ab0';
+    ctx.beginPath();
+    ctx.moveTo(0, h);
+    ctx.lineTo(0, 140);
+    ctx.lineTo(40, 100);
+    ctx.lineTo(90, 70);
+    ctx.lineTo(130, 90);
+    ctx.lineTo(170, 55);
+    ctx.lineTo(220, 80);
+    ctx.lineTo(260, 60);
+    ctx.lineTo(310, 85);
+    ctx.lineTo(350, 50);
+    ctx.lineTo(390, 75);
+    ctx.lineTo(430, 65);
+    ctx.lineTo(470, 90);
+    ctx.lineTo(512, 80);
+    ctx.lineTo(512, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Snow caps on distant peaks
+    ctx.fillStyle = 'rgba(240, 245, 255, 0.6)';
+    const distPeaks = [
+      { x: 90, y: 70, w: 20 }, { x: 170, y: 55, w: 22 },
+      { x: 260, y: 60, w: 18 }, { x: 350, y: 50, w: 24 },
+      { x: 430, y: 65, w: 16 },
+    ];
+    for (const p of distPeaks) {
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x - p.w * 0.4, p.y + 14);
+      ctx.lineTo(p.x + p.w * 0.5, p.y + 12);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Mid-range mountains (darker grey)
+    const midGrad = ctx.createLinearGradient(0, 90, 0, h);
+    midGrad.addColorStop(0, '#6a7888');
+    midGrad.addColorStop(1, '#7a8898');
+    ctx.fillStyle = midGrad;
+    ctx.beginPath();
+    ctx.moveTo(0, h);
+    ctx.lineTo(0, 150);
+    ctx.lineTo(60, 110);
+    ctx.lineTo(120, 95);
+    ctx.lineTo(180, 120);
+    ctx.lineTo(240, 90);
+    ctx.lineTo(300, 115);
+    ctx.lineTo(360, 100);
+    ctx.lineTo(420, 110);
+    ctx.lineTo(480, 95);
+    ctx.lineTo(512, 105);
+    ctx.lineTo(512, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Snow caps on mid peaks
+    ctx.fillStyle = 'rgba(235, 240, 250, 0.5)';
+    const midPeaks = [
+      { x: 120, y: 95, w: 18 }, { x: 240, y: 90, w: 20 },
+      { x: 360, y: 100, w: 16 }, { x: 480, y: 95, w: 18 },
+    ];
+    for (const p of midPeaks) {
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x - p.w * 0.35, p.y + 10);
+      ctx.lineTo(p.x + p.w * 0.45, p.y + 8);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Wispy clouds
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    const clouds = [
+      { x: 80, y: 40, rx: 30, ry: 8 },
+      { x: 280, y: 30, rx: 40, ry: 10 },
+      { x: 450, y: 45, rx: 25, ry: 7 },
+    ];
+    for (const c of clouds) {
+      ctx.beginPath();
+      ctx.ellipse(c.x, c.y, c.rx, c.ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(c.x + c.rx * 0.6, c.y - 3, c.rx * 0.6, c.ry * 0.7, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    refresh();
+  }
+
+  // ---- MOUNTAIN HILLS NEAR ----
+  private makeHillsNearMountain(): void {
+    const w = 512, h = 250;
+    const { ctx, refresh } = this.canvas('hills-near-mountain', w, h);
+
+    // Base fill
+    ctx.fillStyle = '#b0c4d8';
+    ctx.fillRect(0, 0, w, h);
+
+    // Near mountain slopes — large rocky forms
+    const slopeGrad = ctx.createLinearGradient(0, 80, 0, h);
+    slopeGrad.addColorStop(0, '#5a6068');
+    slopeGrad.addColorStop(0.4, '#686e78');
+    slopeGrad.addColorStop(0.8, '#6a7080');
+    slopeGrad.addColorStop(1, '#585e68');
+    ctx.fillStyle = slopeGrad;
+    ctx.beginPath();
+    ctx.moveTo(0, h);
+    ctx.lineTo(0, 160);
+    ctx.bezierCurveTo(30, 130, 60, 100, 100, 80);
+    ctx.bezierCurveTo(140, 60, 170, 90, 200, 110);
+    ctx.bezierCurveTo(230, 130, 260, 85, 300, 70);
+    ctx.bezierCurveTo(340, 55, 370, 95, 400, 120);
+    ctx.bezierCurveTo(430, 140, 460, 90, 490, 75);
+    ctx.lineTo(512, 85);
+    ctx.lineTo(512, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Snow on near peaks
+    ctx.fillStyle = 'rgba(230, 238, 248, 0.55)';
+    ctx.beginPath();
+    ctx.moveTo(80, 90);
+    ctx.bezierCurveTo(90, 82, 100, 80, 110, 85);
+    ctx.bezierCurveTo(105, 95, 90, 98, 80, 90);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(280, 78);
+    ctx.bezierCurveTo(290, 70, 305, 70, 315, 78);
+    ctx.bezierCurveTo(305, 88, 290, 88, 280, 78);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(475, 82);
+    ctx.bezierCurveTo(483, 75, 494, 75, 500, 82);
+    ctx.bezierCurveTo(495, 90, 482, 90, 475, 82);
+    ctx.closePath();
+    ctx.fill();
+
+    // Rock face detail — cracks and ledges
+    ctx.strokeStyle = 'rgba(40, 44, 52, 0.3)';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 8; i++) {
+      const lx = (i * 67 + 20) % w;
+      const ly = 120 + (i * 23) % 80;
+      ctx.beginPath();
+      ctx.moveTo(lx, ly);
+      ctx.lineTo(lx + 25, ly + 3);
+      ctx.lineTo(lx + 40, ly - 2);
+      ctx.stroke();
+    }
+
+    // Scattered boulders on slopes
+    ctx.fillStyle = 'rgba(75, 80, 90, 0.4)';
+    const boulders = [
+      { x: 60, y: 170, r: 6 }, { x: 150, y: 155, r: 5 },
+      { x: 250, y: 140, r: 7 }, { x: 350, y: 160, r: 5 },
+      { x: 460, y: 145, r: 6 },
+    ];
+    for (const b of boulders) {
+      ctx.beginPath();
+      ctx.ellipse(b.x, b.y, b.r, b.r * 0.7, 0.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Pine trees on lower slopes (small, distant)
+    const treeColor = '#3a5038';
+    const trees = [
+      { x: 40, y: 190 }, { x: 75, y: 180 }, { x: 130, y: 170 },
+      { x: 175, y: 160 }, { x: 220, y: 175 }, { x: 330, y: 165 },
+      { x: 380, y: 175 }, { x: 440, y: 160 }, { x: 500, y: 170 },
+    ];
+    for (const t of trees) {
+      // Trunk
+      ctx.fillStyle = '#4a3a28';
+      ctx.fillRect(t.x - 1, t.y, 2, 8);
+      // Canopy — triangular pine
+      ctx.fillStyle = treeColor;
+      ctx.beginPath();
+      ctx.moveTo(t.x, t.y - 12);
+      ctx.lineTo(t.x - 6, t.y + 2);
+      ctx.lineTo(t.x + 6, t.y + 2);
+      ctx.closePath();
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(t.x, t.y - 7);
+      ctx.lineTo(t.x - 5, t.y + 5);
+      ctx.lineTo(t.x + 5, t.y + 5);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Atmospheric haze near bottom
+    const hazeGrad = ctx.createLinearGradient(0, h - 40, 0, h);
+    hazeGrad.addColorStop(0, 'rgba(180, 195, 215, 0)');
+    hazeGrad.addColorStop(1, 'rgba(180, 195, 215, 0.3)');
+    ctx.fillStyle = hazeGrad;
+    ctx.fillRect(0, h - 40, w, 40);
 
     refresh();
   }
@@ -3894,6 +4176,427 @@ export class BootScene extends Phaser.Scene {
     ctx.moveTo(12, 20);
     ctx.quadraticCurveTo(14, 24, 12, 30);
     ctx.stroke();
+
+    refresh();
+  }
+
+  private makeHazardParasaurolophus(): void {
+    const W = 96, H = 80;
+    const { ctx, refresh } = this.canvas('hazard-parasaurolophus', W, H);
+
+    // --- GROUND SHADOW ---
+    ctx.fillStyle = 'rgba(0,0,0,0.22)';
+    ctx.beginPath();
+    ctx.ellipse(46, 77, 32, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // --- TAIL (long, muscular, tapering right with slight droop) ---
+    const tailGrad = ctx.createLinearGradient(62, 38, 94, 48);
+    tailGrad.addColorStop(0, '#5a6e3a');
+    tailGrad.addColorStop(0.5, '#4e6030');
+    tailGrad.addColorStop(1, '#3a4a22');
+    ctx.fillStyle = tailGrad;
+    ctx.beginPath();
+    ctx.moveTo(62, 36);
+    ctx.quadraticCurveTo(74, 32, 84, 36);
+    ctx.quadraticCurveTo(92, 40, 94, 44);
+    ctx.quadraticCurveTo(90, 48, 82, 46);
+    ctx.quadraticCurveTo(72, 44, 62, 44);
+    ctx.closePath();
+    ctx.fill();
+    // Tail spine ridge
+    ctx.strokeStyle = 'rgba(80,100,50,0.5)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(64, 37);
+    ctx.quadraticCurveTo(76, 33, 88, 38);
+    ctx.stroke();
+    // Tail underside shading
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.beginPath();
+    ctx.moveTo(64, 44);
+    ctx.quadraticCurveTo(78, 48, 90, 46);
+    ctx.quadraticCurveTo(78, 46, 64, 44);
+    ctx.closePath();
+    ctx.fill();
+
+    // --- FAR HIND LEG (behind body, darker) ---
+    const farLegGrad = ctx.createLinearGradient(48, 52, 48, 76);
+    farLegGrad.addColorStop(0, '#3e5222');
+    farLegGrad.addColorStop(0.6, '#334518');
+    farLegGrad.addColorStop(1, '#2a3812');
+    ctx.fillStyle = farLegGrad;
+    // Thigh
+    ctx.beginPath();
+    ctx.moveTo(52, 50);
+    ctx.quadraticCurveTo(58, 54, 56, 60);
+    ctx.lineTo(54, 68);
+    ctx.quadraticCurveTo(53, 72, 50, 74);
+    ctx.lineTo(44, 74);
+    ctx.quadraticCurveTo(44, 70, 46, 66);
+    ctx.lineTo(44, 58);
+    ctx.quadraticCurveTo(44, 52, 48, 50);
+    ctx.closePath();
+    ctx.fill();
+    // Far foot
+    ctx.fillStyle = '#2a3812';
+    ctx.beginPath();
+    ctx.moveTo(44, 74);
+    ctx.lineTo(42, 76);
+    ctx.lineTo(54, 76);
+    ctx.lineTo(50, 74);
+    ctx.closePath();
+    ctx.fill();
+    // Toe claws
+    ctx.fillStyle = '#1a2008';
+    for (const tx of [43, 47, 51]) {
+      ctx.beginPath();
+      ctx.moveTo(tx, 76);
+      ctx.lineTo(tx + 1, 78);
+      ctx.lineTo(tx + 2, 76);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // --- FAR FRONT LEG ---
+    ctx.fillStyle = farLegGrad;
+    ctx.beginPath();
+    ctx.moveTo(30, 52);
+    ctx.quadraticCurveTo(34, 56, 34, 62);
+    ctx.lineTo(33, 70);
+    ctx.quadraticCurveTo(32, 74, 28, 76);
+    ctx.lineTo(24, 76);
+    ctx.quadraticCurveTo(24, 72, 26, 68);
+    ctx.lineTo(26, 60);
+    ctx.quadraticCurveTo(26, 54, 28, 52);
+    ctx.closePath();
+    ctx.fill();
+
+    // --- NEAR HIND LEG (muscular, in front) ---
+    const nearLegGrad = ctx.createLinearGradient(52, 50, 52, 76);
+    nearLegGrad.addColorStop(0, '#5a6e3a');
+    nearLegGrad.addColorStop(0.4, '#4e6030');
+    nearLegGrad.addColorStop(0.8, '#3e5222');
+    nearLegGrad.addColorStop(1, '#334518');
+    ctx.fillStyle = nearLegGrad;
+    // Muscular thigh
+    ctx.beginPath();
+    ctx.moveTo(56, 48);
+    ctx.quadraticCurveTo(64, 50, 64, 58);
+    ctx.quadraticCurveTo(63, 62, 60, 66);
+    ctx.lineTo(58, 72);
+    ctx.quadraticCurveTo(56, 76, 52, 76);
+    ctx.lineTo(48, 76);
+    ctx.quadraticCurveTo(48, 72, 50, 68);
+    ctx.lineTo(52, 62);
+    ctx.quadraticCurveTo(52, 56, 52, 50);
+    ctx.closePath();
+    ctx.fill();
+    // Muscle definition on thigh
+    ctx.strokeStyle = 'rgba(80,100,50,0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(58, 50);
+    ctx.quadraticCurveTo(62, 56, 58, 64);
+    ctx.stroke();
+    // Near foot
+    ctx.fillStyle = '#334518';
+    ctx.beginPath();
+    ctx.moveTo(48, 76);
+    ctx.lineTo(46, 77);
+    ctx.lineTo(58, 77);
+    ctx.lineTo(52, 76);
+    ctx.closePath();
+    ctx.fill();
+    // Toe claws
+    ctx.fillStyle = '#1a2008';
+    for (const tx of [47, 51, 55]) {
+      ctx.beginPath();
+      ctx.moveTo(tx, 77);
+      ctx.lineTo(tx + 1, 79);
+      ctx.lineTo(tx + 2, 77);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // --- NEAR FRONT LEG ---
+    const nearFrontGrad = ctx.createLinearGradient(30, 50, 30, 76);
+    nearFrontGrad.addColorStop(0, '#5a6e3a');
+    nearFrontGrad.addColorStop(0.6, '#4a5e2a');
+    nearFrontGrad.addColorStop(1, '#3a4e1a');
+    ctx.fillStyle = nearFrontGrad;
+    ctx.beginPath();
+    ctx.moveTo(32, 50);
+    ctx.quadraticCurveTo(38, 52, 40, 58);
+    ctx.lineTo(40, 66);
+    ctx.quadraticCurveTo(40, 72, 36, 76);
+    ctx.lineTo(30, 76);
+    ctx.quadraticCurveTo(30, 72, 32, 68);
+    ctx.lineTo(32, 60);
+    ctx.quadraticCurveTo(30, 54, 30, 50);
+    ctx.closePath();
+    ctx.fill();
+    // Knee joint
+    ctx.fillStyle = 'rgba(0,0,0,0.1)';
+    ctx.beginPath();
+    ctx.ellipse(36, 66, 4, 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Foot
+    ctx.fillStyle = '#3a4e1a';
+    ctx.beginPath();
+    ctx.moveTo(30, 76);
+    ctx.lineTo(28, 77);
+    ctx.lineTo(40, 77);
+    ctx.lineTo(36, 76);
+    ctx.closePath();
+    ctx.fill();
+
+    // --- BODY (large barrel-shaped torso) ---
+    const bodyGrad = ctx.createLinearGradient(26, 26, 66, 60);
+    bodyGrad.addColorStop(0, '#6a8044');
+    bodyGrad.addColorStop(0.25, '#5e7438');
+    bodyGrad.addColorStop(0.55, '#52682e');
+    bodyGrad.addColorStop(0.85, '#465c24');
+    bodyGrad.addColorStop(1, '#3a4e1a');
+    ctx.fillStyle = bodyGrad;
+    ctx.beginPath();
+    ctx.moveTo(28, 52);
+    ctx.quadraticCurveTo(20, 48, 22, 38);
+    ctx.quadraticCurveTo(26, 28, 38, 26);
+    ctx.quadraticCurveTo(52, 24, 64, 28);
+    ctx.quadraticCurveTo(72, 32, 70, 42);
+    ctx.quadraticCurveTo(68, 52, 60, 54);
+    ctx.quadraticCurveTo(46, 58, 28, 52);
+    ctx.closePath();
+    ctx.fill();
+
+    // Belly underside lighter
+    const bellyGrad = ctx.createLinearGradient(34, 48, 34, 58);
+    bellyGrad.addColorStop(0, 'rgba(130,160,80,0.15)');
+    bellyGrad.addColorStop(1, 'rgba(90,110,50,0.25)');
+    ctx.fillStyle = bellyGrad;
+    ctx.beginPath();
+    ctx.moveTo(30, 50);
+    ctx.quadraticCurveTo(46, 58, 64, 52);
+    ctx.quadraticCurveTo(46, 56, 30, 50);
+    ctx.closePath();
+    ctx.fill();
+
+    // Spine ridge highlight
+    ctx.strokeStyle = 'rgba(110,140,70,0.35)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(30, 30);
+    ctx.quadraticCurveTo(46, 24, 66, 30);
+    ctx.stroke();
+
+    // Hide texture — scattered scale-like bumps
+    ctx.strokeStyle = 'rgba(60,80,30,0.25)';
+    ctx.lineWidth = 0.8;
+    const hideMarks = [
+      [34, 34], [42, 30], [50, 32], [58, 34], [64, 38],
+      [36, 42], [44, 38], [52, 40], [60, 42], [30, 38],
+      [40, 46], [50, 48], [58, 46], [34, 50], [46, 52],
+    ];
+    for (const [hx, hy] of hideMarks) {
+      ctx.beginPath();
+      ctx.arc(hx, hy, 2.5, Math.PI * 0.8, Math.PI * 0.2, true);
+      ctx.stroke();
+    }
+
+    // --- DARK BANDING (natural camouflage stripes across back/flanks) ---
+    ctx.fillStyle = 'rgba(40,55,18,0.2)';
+    const bandPositions = [32, 40, 48, 56, 62];
+    for (const bx of bandPositions) {
+      ctx.beginPath();
+      ctx.moveTo(bx, 28 + Math.abs(bx - 46) * 0.15);
+      ctx.quadraticCurveTo(bx + 2, 40, bx + 1, 52 - Math.abs(bx - 46) * 0.1);
+      ctx.quadraticCurveTo(bx - 1, 40, bx, 28 + Math.abs(bx - 46) * 0.15);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // --- NECK (thick, gracefully curved upward) ---
+    const neckGrad = ctx.createLinearGradient(16, 16, 34, 42);
+    neckGrad.addColorStop(0, '#6a8044');
+    neckGrad.addColorStop(0.5, '#5e7438');
+    neckGrad.addColorStop(1, '#52682e');
+    ctx.fillStyle = neckGrad;
+    ctx.beginPath();
+    ctx.moveTo(30, 38);
+    ctx.quadraticCurveTo(26, 32, 22, 24);
+    ctx.quadraticCurveTo(18, 16, 16, 14);
+    ctx.quadraticCurveTo(14, 12, 18, 12);
+    ctx.quadraticCurveTo(24, 14, 28, 20);
+    ctx.quadraticCurveTo(34, 28, 36, 36);
+    ctx.closePath();
+    ctx.fill();
+    // Neck throat lighter stripe
+    ctx.fillStyle = 'rgba(130,160,80,0.2)';
+    ctx.beginPath();
+    ctx.moveTo(22, 24);
+    ctx.quadraticCurveTo(20, 18, 18, 14);
+    ctx.quadraticCurveTo(16, 16, 20, 22);
+    ctx.quadraticCurveTo(22, 28, 28, 34);
+    ctx.closePath();
+    ctx.fill();
+    // Neck wrinkle lines
+    ctx.strokeStyle = 'rgba(50,70,24,0.3)';
+    ctx.lineWidth = 0.7;
+    for (let n = 0; n < 3; n++) {
+      const ny = 20 + n * 5;
+      ctx.beginPath();
+      ctx.moveTo(22 + n * 1, ny);
+      ctx.quadraticCurveTo(26 + n * 1, ny + 2, 30 + n * 1, ny);
+      ctx.stroke();
+    }
+
+    // --- HEAD (elongated, duck-billed) ---
+    const headGrad = ctx.createLinearGradient(2, 8, 22, 22);
+    headGrad.addColorStop(0, '#6a8044');
+    headGrad.addColorStop(0.5, '#5e7438');
+    headGrad.addColorStop(1, '#52682e');
+    ctx.fillStyle = headGrad;
+    ctx.beginPath();
+    ctx.moveTo(20, 10);
+    ctx.quadraticCurveTo(16, 8, 10, 10);
+    ctx.quadraticCurveTo(4, 12, 2, 16);
+    ctx.quadraticCurveTo(2, 20, 6, 22);
+    ctx.quadraticCurveTo(12, 24, 18, 22);
+    ctx.quadraticCurveTo(22, 18, 20, 14);
+    ctx.closePath();
+    ctx.fill();
+
+    // Jaw line / lower jaw
+    ctx.fillStyle = '#52682e';
+    ctx.beginPath();
+    ctx.moveTo(6, 20);
+    ctx.quadraticCurveTo(4, 22, 2, 22);
+    ctx.quadraticCurveTo(2, 24, 6, 24);
+    ctx.quadraticCurveTo(12, 24, 16, 22);
+    ctx.quadraticCurveTo(12, 22, 6, 20);
+    ctx.closePath();
+    ctx.fill();
+
+    // Duck bill — broad flat keratinous beak
+    const billGrad = ctx.createLinearGradient(0, 14, 6, 22);
+    billGrad.addColorStop(0, '#7a8a50');
+    billGrad.addColorStop(1, '#5a6a34');
+    ctx.fillStyle = billGrad;
+    ctx.beginPath();
+    ctx.moveTo(4, 14);
+    ctx.quadraticCurveTo(0, 16, -1, 18);
+    ctx.quadraticCurveTo(0, 22, 4, 22);
+    ctx.quadraticCurveTo(6, 20, 6, 16);
+    ctx.closePath();
+    ctx.fill();
+    // Bill edge line
+    ctx.strokeStyle = '#3a4a20';
+    ctx.lineWidth = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(0, 16);
+    ctx.quadraticCurveTo(0, 20, 4, 22);
+    ctx.stroke();
+
+    // Nostril
+    ctx.fillStyle = '#3a4a20';
+    ctx.beginPath();
+    ctx.ellipse(6, 14, 1.2, 0.8, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // --- CREST (signature long curved hollow tube crest) ---
+    const crestGrad = ctx.createLinearGradient(14, 0, 40, 12);
+    crestGrad.addColorStop(0, '#8a6832');
+    crestGrad.addColorStop(0.3, '#7a5a28');
+    crestGrad.addColorStop(0.6, '#6a4c20');
+    crestGrad.addColorStop(1, '#5a4018');
+    ctx.fillStyle = crestGrad;
+    ctx.beginPath();
+    ctx.moveTo(16, 12);
+    ctx.quadraticCurveTo(18, 6, 24, 3);
+    ctx.quadraticCurveTo(32, 0, 40, 2);
+    ctx.quadraticCurveTo(44, 4, 42, 7);
+    ctx.quadraticCurveTo(38, 6, 32, 6);
+    ctx.quadraticCurveTo(24, 8, 20, 12);
+    ctx.closePath();
+    ctx.fill();
+    // Crest top highlight
+    ctx.strokeStyle = 'rgba(180,150,90,0.5)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(18, 8);
+    ctx.quadraticCurveTo(26, 2, 36, 2);
+    ctx.stroke();
+    // Crest underside shadow
+    ctx.strokeStyle = 'rgba(40,30,10,0.35)';
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(20, 12);
+    ctx.quadraticCurveTo(28, 9, 38, 7);
+    ctx.stroke();
+    // Crest bone-ridge detail line
+    ctx.strokeStyle = 'rgba(120,100,60,0.3)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(20, 10);
+    ctx.quadraticCurveTo(28, 5, 38, 4);
+    ctx.stroke();
+
+    // --- EYE (detailed with iris ring) ---
+    // Eye socket shadow
+    ctx.fillStyle = 'rgba(30,40,10,0.3)';
+    ctx.beginPath();
+    ctx.ellipse(12, 14, 3.5, 2.8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Sclera
+    ctx.fillStyle = '#c8c4a0';
+    ctx.beginPath();
+    ctx.ellipse(12, 14, 2.8, 2.2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Iris
+    ctx.fillStyle = '#5a6820';
+    ctx.beginPath();
+    ctx.arc(11.6, 14, 1.6, 0, Math.PI * 2);
+    ctx.fill();
+    // Pupil
+    ctx.fillStyle = '#111';
+    ctx.beginPath();
+    ctx.arc(11.4, 14, 0.9, 0, Math.PI * 2);
+    ctx.fill();
+    // Specular highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    ctx.beginPath();
+    ctx.arc(10.6, 13.2, 0.6, 0, Math.PI * 2);
+    ctx.fill();
+    // Lower eyelid
+    ctx.strokeStyle = 'rgba(60,80,30,0.4)';
+    ctx.lineWidth = 0.6;
+    ctx.beginPath();
+    ctx.arc(12, 14, 2.6, 0.3, Math.PI - 0.3);
+    ctx.stroke();
+
+    // --- BODY OUTLINE for definition ---
+    ctx.strokeStyle = 'rgba(40,55,18,0.35)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(28, 52);
+    ctx.quadraticCurveTo(20, 48, 22, 38);
+    ctx.quadraticCurveTo(26, 28, 38, 26);
+    ctx.quadraticCurveTo(52, 24, 64, 28);
+    ctx.quadraticCurveTo(72, 32, 70, 42);
+    ctx.quadraticCurveTo(68, 52, 60, 54);
+    ctx.stroke();
+
+    // --- RIB SHADOWS (subtle musculature) ---
+    ctx.strokeStyle = 'rgba(40,55,18,0.15)';
+    ctx.lineWidth = 0.7;
+    for (let r = 0; r < 4; r++) {
+      const rx = 34 + r * 8;
+      ctx.beginPath();
+      ctx.moveTo(rx, 30 + r * 0.5);
+      ctx.quadraticCurveTo(rx + 2, 40, rx + 1, 50 - r * 0.5);
+      ctx.stroke();
+    }
 
     refresh();
   }

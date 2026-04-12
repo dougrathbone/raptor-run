@@ -6,7 +6,7 @@
 import Phaser from 'phaser';
 
 export type ObstacleType = 'log' | 'bench' | 'pterodactyl' | 'rock' | 'triceratops' | 'trap' | 'spear'
-  | 'stegosaurus' | 'ankylosaurus' | 'dilophosaurus' | 'compy' | 'dimorphodon' | 'venom';
+  | 'stegosaurus' | 'ankylosaurus' | 'dilophosaurus' | 'compy' | 'dimorphodon' | 'venom' | 'parasaurolophus';
 
 export class Obstacle extends Phaser.Physics.Arcade.Sprite {
   public obstacleType: ObstacleType;

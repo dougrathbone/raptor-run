@@ -26,14 +26,19 @@ export class BiomeManager {
    * Check if we've crossed a biome threshold.
    * Returns the new BiomeConfig if a transition happened, or null if not.
    */
+  private static readonly BIOME_ORDER: BiomeName[] = ['JUNGLE', 'SWAMP', 'VOLCANO', 'CAVES', 'MOUNTAIN'];
+
   update(distance: number): BiomeConfig | null {
     let newBiome: BiomeName | null = null;
+    const idx = BiomeManager.BIOME_ORDER.indexOf(this.currentBiomeName);
 
-    if (distance >= BIOME_THRESHOLDS.CAVES && this.currentBiomeName !== 'CAVES') {
+    if (distance >= BIOME_THRESHOLDS.MOUNTAIN && idx < 4) {
+      newBiome = 'MOUNTAIN';
+    } else if (distance >= BIOME_THRESHOLDS.CAVES && idx < 3) {
       newBiome = 'CAVES';
-    } else if (distance >= BIOME_THRESHOLDS.VOLCANO && this.currentBiomeName !== 'VOLCANO' && this.currentBiomeName !== 'CAVES') {
+    } else if (distance >= BIOME_THRESHOLDS.VOLCANO && idx < 2) {
       newBiome = 'VOLCANO';
-    } else if (distance >= BIOME_THRESHOLDS.SWAMP && this.currentBiomeName !== 'SWAMP' && this.currentBiomeName !== 'VOLCANO' && this.currentBiomeName !== 'CAVES') {
+    } else if (distance >= BIOME_THRESHOLDS.SWAMP && idx < 1) {
       newBiome = 'SWAMP';
     }
 

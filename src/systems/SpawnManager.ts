@@ -71,6 +71,7 @@ export class SpawnManager {
         case 'dimorphodon': obs.setVelocityX(-scrollSpeed * 1.4); break;
         case 'stegosaurus': obs.setVelocityX(-scrollSpeed * 0.8); break;
         case 'ankylosaurus': obs.setVelocityX(-scrollSpeed * 0.7); break;
+        case 'parasaurolophus': obs.setVelocityX(-scrollSpeed * 1.1); break;
         case 'spear': obs.setVelocityX(-scrollSpeed * 1.8); break;
         case 'rock': break; // rock has its own velocity
         case 'venom': break; // venom has gravity-based arc
@@ -136,6 +137,7 @@ export class SpawnManager {
       case 'stegosaurus': this.spawnStegosaurus(scrollSpeed); break;
       case 'dilophosaurus': this.spawnDilophosaurus(scrollSpeed); break;
       case 'ankylosaurus': this.spawnAnkylosaurus(scrollSpeed); break;
+      case 'parasaurolophus': this.spawnParasaurolophus(scrollSpeed); break;
     }
   }
 
@@ -263,6 +265,7 @@ export class SpawnManager {
       this.scene, GAME_WIDTH + 60, GROUND_Y - 36,
       texture, 'stegosaurus',
     );
+    obstacle.setFlipX(true);
     obstacle.setVelocityX(-scrollSpeed * 0.8);
     this.obstacleGroup.add(obstacle);
   }
@@ -304,6 +307,16 @@ export class SpawnManager {
       'hazard-ankylosaurus', 'ankylosaurus',
     );
     obstacle.setVelocityX(-scrollSpeed * 0.7);
+    this.obstacleGroup.add(obstacle);
+  }
+
+  private spawnParasaurolophus(scrollSpeed: number): void {
+    const obstacle = new Obstacle(
+      this.scene, GAME_WIDTH + 60, GROUND_Y - 38,
+      'hazard-parasaurolophus', 'parasaurolophus',
+    );
+    obstacle.setFlipX(true);
+    obstacle.setVelocityX(-scrollSpeed * 1.1);
     this.obstacleGroup.add(obstacle);
   }
 
