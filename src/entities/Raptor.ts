@@ -102,6 +102,7 @@ export class Raptor extends Phaser.Physics.Arcade.Sprite {
   }
 
   // --- Ducking / Crouching ---
+
   duck(): void {
     if (this._isDucking) return;
     const body = this.body as Phaser.Physics.Arcade.Body;
@@ -110,15 +111,21 @@ export class Raptor extends Phaser.Physics.Arcade.Sprite {
 
     this._isDucking = true;
     const cfg = STAGE_CONFIG[this.stage];
-    body.setSize(cfg.bodyWidth + 6, cfg.crouchHeight);
-    // Flatten the sprite
     const base = this.getBaseScale();
+
+    // Anchor at bottom so the squish keeps feet on the ground
+    const bottomY = this.y + this.displayHeight * 0.5;
+    this.setOrigin(0.5, 1);
+    this.y = bottomY;
+
+    // Flatten the sprite visually
     this.setScale(base, base * 0.55);
-    // Shift body offset so raptor stays on the ground
-    const yOffset = cfg.bodyHeight - cfg.crouchHeight;
+
+    // Resize physics body and align to bottom
+    body.setSize(cfg.bodyWidth + 6, cfg.crouchHeight);
     body.setOffset(
       (this.width - (cfg.bodyWidth + 6)) / 2,
-      this.height - cfg.crouchHeight + yOffset / 2,
+      this.height - cfg.crouchHeight,
     );
   }
 
@@ -127,13 +134,21 @@ export class Raptor extends Phaser.Physics.Arcade.Sprite {
     this._isDucking = false;
     const cfg = STAGE_CONFIG[this.stage];
     const body = this.body as Phaser.Physics.Arcade.Body;
+    const base = this.getBaseScale();
+
+    // Restore scale first
+    this.setScale(base);
+
+    // Switch back to center origin
+    const bottomY = this.y;
+    this.setOrigin(0.5, 0.5);
+    this.y = bottomY - this.displayHeight * 0.5;
+
     body.setSize(cfg.bodyWidth, cfg.bodyHeight);
     body.setOffset(
       (this.width - cfg.bodyWidth) / 2,
       (this.height - cfg.bodyHeight) / 2,
     );
-    const base = this.getBaseScale();
-    this.setScale(base);
   }
 
   get isDucking(): boolean {
@@ -225,18 +240,36 @@ export class Raptor extends Phaser.Physics.Arcade.Sprite {
   }
 
   // --- Dash ability (Juvenile or Adult) ---
+  private startX = 0;
+
   dash(): boolean {
     if (this.stage === 'hatchling') return false;
     if (this._isDashing || this.dashCooldownTimer > 0) return false;
     if (this._isDucking) this.standUp();
 
     this._isDashing = true;
+    this.startX = this.x;
     this.setTint(0xffff44);
+
+    // Lunge forward
+    this.scene.tweens.add({
+      targets: this,
+      x: this.x + 150,
+      duration: DASH_DURATION * 0.4,
+      ease: 'Power2',
+    });
 
     this.scene.time.delayedCall(DASH_DURATION, () => {
       this._isDashing = false;
       this.clearTint();
       this.dashCooldownTimer = DASH_COOLDOWN;
+      // Return to normal position
+      this.scene.tweens.add({
+        targets: this,
+        x: this.startX,
+        duration: 200,
+        ease: 'Power2',
+      });
     });
 
     return true;
